@@ -7,6 +7,8 @@ namespace MasCpanel
   {
     public static readonly Loader L = new();
 
+    public static readonly Config.MarkuStation.Config MsConfig = new();
+
     private static int Main()
     {
       L.StatusTextChanged += LoadCheck;
@@ -33,6 +35,10 @@ namespace MasCpanel
         Console.WriteLine("The computer did not pass Verifile attestation. Closing the program now...");
         return 1;
       }
+
+      L.StatusText = "Interpreting MarkuStation data";
+      MsConfig.LoadConfig();
+      
       new MainScreen
       {
         VerifileStatus = status,

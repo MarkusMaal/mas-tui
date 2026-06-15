@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace MasCpanel.Config;
+namespace MasCpanel.Config.Menu;
 
 public class ScriptMenu
 {
@@ -14,6 +14,7 @@ public class ScriptMenu
             if (el!.Element("Title") == null) ThrowFormatException();
             if (el.Element("Script") == null) ThrowFormatException();
             var title = el.Element("Title")!.Value;
+            var tooltip = el.Element("Tooltip")?.Value;
             var script = new Script();
             script.Wait = el.Element("Script")!.Attribute("Wait")!.Value == "True";
             foreach (var shEl in el.Element("Script")!.Elements())
@@ -30,7 +31,7 @@ public class ScriptMenu
                 shell.Command = shEl.Value;
                 script.AddCommand(shell);
             }
-            _menuItems.Add(new MenuItem() {Script = script, Title = title});
+            _menuItems.Add(new MenuItem() {Script = script, Title = title, Tooltip = tooltip});
         }
     }
 

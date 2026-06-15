@@ -18,9 +18,10 @@ public class MainScreen
             DefaultColor = new Color { BackgroundColor = 0x8, ForegroundColor = 0x0 }
         };
         t.AddTab(new TabItem { Title = "Avaleht" });
+        t.AddTab(new TabItem { Title = "MarkuStation" });
         t.AddTab(new TabItem { Title = "Teave" });
 
-        TabBase[] tabs = [new Home(), new About(VerifileStatus)];
+        TabBase[] tabs = [new Home(), new MarkuStation(), new About(VerifileStatus)];
 
         foreach (var (i, tab) in tabs.Index())
         {

@@ -1,5 +1,5 @@
 using System.Xml.Linq;
-using MasCpanel.Config;
+using MasCpanel.Config.Menu;
 using MasTUICommon;
 using MasTUICommon.Components;
 
@@ -25,13 +25,13 @@ public class Home : TabBase
                 BackgroundColor = 0x10,
                 ForegroundColor = 0x7,
             },
-            TextPadding = Console.WindowWidth  - 8,
+            TextPadding = Console.WindowWidth / 2
         };
-        var scriptMenuFile =Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas", "ScriptMenu.xml");
+        var scriptMenuFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas", "ScriptMenu.xml");
         if (File.Exists(scriptMenuFile))
         {
             scriptMenu = new ScriptMenu(XDocument.Load(scriptMenuFile));
-            foreach (var mi in scriptMenu.GetMenuItems()) _homeMenu.AddItem(mi.Title, (_, _) => { mi.Script.Run(); });
+            foreach (var mi in scriptMenu.GetMenuItems()) _homeMenu.AddItem(mi.Title, (_, _) => { mi.Script.Run(); }, mi.Tooltip);
         }
 
         _homeMenu.MarginTop = 3;

@@ -1,4 +1,4 @@
-namespace MasCpanel.Config;
+namespace MasCpanel.Config.Menu;
 
 // <Script> tags in ScriptMenu.xml
 public class Script

@@ -23,11 +23,12 @@ public class Menu
         }
     }
 
-    public void AddItem(string title, MenuItem.ActionHandler handler)
+    public void AddItem(string title, MenuItem.ActionHandler handler, string? tooltip)
     {
         var mi = new MenuItem()
         {
             Title = title,
+            Tooltip = tooltip,
         };
         mi.Action += handler;
         Items.Add(Items.Count, mi);
@@ -64,8 +65,14 @@ public class Menu
         {
             var pCol = item.Key == SelectedIndex ? ActiveColor : DefaultColor;
             Console.SetCursorPosition(MarginLeft, MarginTop + actualIndex);
-            ColorConsole.WriteLine($"~{pCol}{item.Value.Title.PadRight(TextPadding)}~--");
+            var mChar = (item.Key == SelectedIndex) ? "<>" : "  ";
+            ColorConsole.WriteLine($"~{pCol} {mChar[0]} {item.Value.Title.PadRight(TextPadding - 5)}{mChar[1]} ~--");
         }
+
+        var tip = Items[SelectedIndex].Tooltip;
+        if (tip == null) return;
+        Console.WriteLine();
+        Console.WriteLine(" " + tip.PadRight(2 * TextPadding));
     }
 
     public void Execute()

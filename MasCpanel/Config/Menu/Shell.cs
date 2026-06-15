@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace MasCpanel.Config;
+namespace MasCpanel.Config.Menu;
 
 // <Shell> tags in ScriptMenu.xml
 public class Shell
