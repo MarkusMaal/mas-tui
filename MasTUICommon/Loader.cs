@@ -30,6 +30,11 @@ public class Loader
             _lastUpdate = DateTime.Now;
             if (_loadIdx >= _loaders.Length) _loadIdx = 0;
         }
-        Console.Write($" {_loaders[_loadIdx]}  {StatusText}".PadRight(Console.WindowWidth - 4) + "\r");
+
+        var backup = Console.GetCursorPosition();
+        var fullMsg = $" {_loaders[_loadIdx]}  {StatusText}";
+        Console.SetCursorPosition(Console.WindowWidth / 2 -  fullMsg.Length, Console.WindowHeight / 2);
+        Console.Write(fullMsg.PadBoth(fullMsg.Length * 2) + "\r");
+        Console.SetCursorPosition(backup.Left, backup.Top);
     }
 }

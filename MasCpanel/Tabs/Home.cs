@@ -42,6 +42,7 @@ public class Home : TabBase
     
     public override void ReceiveKey(object sender, ConsoleKey key)
     {
+        if (sender is not MainScreen mainScreen) return;
         switch (key)
         {
             case ConsoleKey.DownArrow:
@@ -52,6 +53,7 @@ public class Home : TabBase
                 break;
             case ConsoleKey.Enter:
                 _homeMenu.Execute();
+                mainScreen.Cls();
                 break;
         }
     }
