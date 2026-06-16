@@ -1,5 +1,6 @@
 using ConsoleImage.Core;
 using MasCpanel.Tabs;
+using MasTUICommon;
 using MasTUICommon.Components;
 using Color = MasTUICommon.Color;
 using Configuration = MasCpanel.Tabs.Configuration;
@@ -11,6 +12,8 @@ public class MainScreen
     private bool _reload;
     public string? VerifileStatus { get; set; }
     private string? _background;
+    
+    private readonly Edition _edition = new();
     public void Show()
     {
         using var colorBlockRenderer = new BrailleRenderer(new RenderOptions
@@ -28,22 +31,27 @@ public class MainScreen
         t.AddTab(new TabItem { Title = "Skriptid" });
         t.AddTab(new TabItem { Title = "MarkuStation" });
         t.AddTab(new TabItem { Title = "Konfiguratsioon" });
-        t.AddTab(new TabItem { Title = "Töölaud" });
+        if (_edition.Features!.Contains("TS"))
+        {
+            t.AddTab(new TabItem { Title = "Töölaud" });
+        }
         t.AddTab(new TabItem { Title = "Teave" });
 
         TabBase[] tabs = [
             new Home(),
             new MarkuStation(),
             new Configuration(),
-            OperatingSystem.IsLinux() &&
+            _edition.Features!.Contains("TS") ? 
+                OperatingSystem.IsLinux() &&
                 File.Exists(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config", "eww", "eww.yuck")) &&
                 Environment.GetEnvironmentVariable("XDG_CURRENT_DESKTOP") == "Hyprland"
-                ? new DesktopEww() : new Desktop(),
-            new About(VerifileStatus)
+                    ? new DesktopEww() : new Desktop() : new About(VerifileStatus, _edition),
+            new About(VerifileStatus, _edition)
         ];
 
         foreach (var (i, tab) in tabs.Index())
         {
+            if (i > t.TabItems.Count - 1) break;
             t.TabItems[i].Draw += tab.Draw;
             t.TabItems[i].KeyDown += tab.ReceiveKey;
         }
