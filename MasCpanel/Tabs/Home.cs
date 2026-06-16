@@ -12,7 +12,7 @@ public class Home : TabBase
 
     public Home()
     {
-        ScriptMenu scriptMenu;
+        ScriptMenu? scriptMenu = null;
         _homeMenu = new Menu
         {
             ActiveColor = new Color
@@ -25,9 +25,9 @@ public class Home : TabBase
                 BackgroundColor = 0x10,
                 ForegroundColor = 0x7,
             },
-            TextPadding = Console.WindowWidth / 2
+            TextPadding = Console.WindowWidth  - 8,
         };
-        var scriptMenuFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas", "ScriptMenu.xml");
+        var scriptMenuFile =Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas", "ScriptMenu.xml");
         if (File.Exists(scriptMenuFile))
         {
             scriptMenu = new ScriptMenu(XDocument.Load(scriptMenuFile));
@@ -36,6 +36,8 @@ public class Home : TabBase
 
         _homeMenu.MarginTop = 3;
         _homeMenu.MarginLeft = 1;
+        if (scriptMenu == null) return;
+        _homeMenu.TextPadding = scriptMenu.GetMenuItems().Max(sm => sm.Title.Length) + 6;
     }
     
     public override void ReceiveKey(object sender, ConsoleKey key)

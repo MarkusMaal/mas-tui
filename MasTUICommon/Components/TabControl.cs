@@ -38,6 +38,7 @@ namespace MasTUICommon.Components
                 rawOutput = isSelected ? " < " + rawOutput + " > " : "   " + rawOutput + "   ";
                 ColorConsole.Write($"~{itemColor}{rawOutput}~--");
             }
+            Console.WriteLine("\n");
             TabItems[SelectedIndex].InvokeDraw(this);
         }
     }

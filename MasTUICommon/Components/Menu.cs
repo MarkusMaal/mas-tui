@@ -72,7 +72,11 @@ public class Menu
         var tip = Items[SelectedIndex].Tooltip;
         if (tip == null) return;
         Console.WriteLine();
-        Console.WriteLine(" " + tip.PadRight(2 * TextPadding));
+        Console.WriteLine(" " + tip.PadRight(Items.Values.Max(v =>
+        {
+            var tooltip2 = v.Tooltip;
+            return tooltip2?.Length ?? 0;
+        })));
     }
 
     public void Execute()

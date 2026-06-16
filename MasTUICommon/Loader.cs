@@ -30,6 +30,6 @@ public class Loader
             _lastUpdate = DateTime.Now;
             if (_loadIdx >= _loaders.Length) _loadIdx = 0;
         }
-        Console.Write($" {_loaders[_loadIdx]}  {StatusText}\r");
+        Console.Write($" {_loaders[_loadIdx]}  {StatusText}".PadRight(Console.WindowWidth - 4) + "\r");
     }
 }

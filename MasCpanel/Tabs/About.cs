@@ -59,10 +59,13 @@ public class About(string? status) : TabBase
             Console.SetCursorPosition(marginLeft, 4 + i);
             ColorConsole.WriteLine($"~-{col} - {kvp.Value}~--");
         }
+        Console.WriteLine("\n ↵  Laadi andmed uuesti (salvestamata muudatused lähevad kaotsi)");
     }
 
     public override void ReceiveKey(object sender, ConsoleKey key)
     {
-        
+        if (!(sender is MainScreen mainScreen) || key != ConsoleKey.Enter)
+            return;
+        mainScreen.Reload();
     }
 }

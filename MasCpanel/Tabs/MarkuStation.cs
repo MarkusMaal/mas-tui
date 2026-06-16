@@ -1,4 +1,5 @@
 using MasCpanel.Config.MarkuStation;
+using MasTUICommon;
 using MasTUICommon.Components;
 
 namespace MasCpanel.Tabs;
@@ -165,14 +166,57 @@ public class MarkuStation : TabBase
             _ => throw new ArgumentOutOfRangeException()
         };
         
-        Console.WriteLine($" [{PrintCheck(Program.MsConfig.PlayIntros)}] (L)uba introd\t\t(M)onitor režiim: {monitorMode}".PadRight(maxWidth / 2));
-        Console.WriteLine($" [{PrintCheck(Program.MsConfig.CreepypastaIntro)}] (C)reepypasta intro\t(R)akenda muudatused");
-        Console.WriteLine($" [{PrintCheck(Program.MsConfig.LegacyIntro)}] (P)ärandintro");
-        Console.WriteLine($" [{PrintCheck(Program.MsConfig.SpecialIntro)}] (S)pecial intro");
-    }
-
-    private string PrintCheck(bool val)
-    {
-        return (val ? "X" : " ");
+        ++Console.CursorLeft;
+        new Checkbox()
+        {
+            Key = 'L',
+            KeyColor = new Color()
+            {
+                BackgroundColor = 16 /*0x10*/,
+                ForegroundColor = 12
+            },
+            Label = "Luba introd",
+            Value = Program.MsConfig.PlayIntros
+        }.Draw();
+        ColorConsole.WriteLine(("~--\t\t(~-DM~--)onitor režiim: " + monitorMode).PadRight(maxWidth / 2));
+        ++Console.CursorLeft;
+        new Checkbox()
+        {
+            Key = 'C',
+            KeyColor = new Color()
+            {
+                BackgroundColor = 16 /*0x10*/,
+                ForegroundColor = 10
+            },
+            Label = "Creepypasta intro",
+            Value = Program.MsConfig.CreepypastaIntro
+        }.Draw();
+        ColorConsole.WriteLine("~--\t(~-FR~--)akenda muudatused");
+        ++Console.CursorLeft;
+        new Checkbox()
+        {
+            Key = 'P',
+            KeyColor = new Color()
+            {
+                BackgroundColor = 16 /*0x10*/,
+                ForegroundColor = 11
+            },
+            Label = "Pärandintro",
+            Value = Program.MsConfig.LegacyIntro
+        }.Draw();
+        Console.WriteLine();
+        ++Console.CursorLeft;
+        new Checkbox()
+        {
+            Key = 'S',
+            KeyColor = new Color()
+            {
+                BackgroundColor = 16 /*0x10*/,
+                ForegroundColor = 14
+            },
+            Label = "Special intro",
+            Value = Program.MsConfig.SpecialIntro
+        }.Draw();
+        Console.WriteLine();
     }
 }

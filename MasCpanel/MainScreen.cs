@@ -1,13 +1,13 @@
-using System.Runtime.CompilerServices;
-using MasCommon;
 using MasCpanel.Tabs;
-using MasTUICommon;
 using MasTUICommon.Components;
+using Color = MasTUICommon.Color;
+using Configuration = MasCpanel.Tabs.Configuration;
 
 namespace MasCpanel;
 
 public class MainScreen
 {
+    private bool _reload;
     public string? VerifileStatus { get; set; }
     public void Show()
     {
@@ -19,9 +19,10 @@ public class MainScreen
         };
         t.AddTab(new TabItem { Title = "Avaleht" });
         t.AddTab(new TabItem { Title = "MarkuStation" });
+        t.AddTab(new TabItem { Title = "Konfiguratsioon" });
         t.AddTab(new TabItem { Title = "Teave" });
 
-        TabBase[] tabs = [new Home(), new MarkuStation(), new About(VerifileStatus)];
+        TabBase[] tabs = [new Home(), new MarkuStation(), new Configuration(), new About(VerifileStatus)];
 
         foreach (var (i, tab) in tabs.Index())
         {
@@ -70,7 +71,14 @@ public class MainScreen
                     break;
             }
 
-            if (consoleBreak) break;
+            if (consoleBreak || _reload) break;
         }
+    }
+
+    public void Reload()
+    {
+        Console.Clear();
+        _reload = true;
+        new Thread(Program.Reload).Start();
     }
 }
