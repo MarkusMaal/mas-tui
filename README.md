@@ -75,15 +75,15 @@ Taustad:  (V)aheta miniversioon töölauataustaga
        Avaleht             MarkuStation        Konfiguratsioon     <      Teave       > 
 
          Markuse arvuti asjad 52 – Heksagon       Funktsioonid:
-         Pro                                       - Interaktiivne töölaud
-         HG530000a                                 - Rainmeter
-                                                   - Integratsioonitarkvara
-Keel: et-EE                                        - Klassikaline start menüü
-Juurutatud: Jah                                    - Standardfunktsioonid
-Kasutaja: markus                                   - Kaugjuhtimine
-Kinnituskood: 4262                                 - Windows 10+
-Olek: VERIFIED                                     - LiveTuner optimeerimised
-Räsi: 2da1e9ea32                                   - Grupipoliitika
+         Pro                                       ✓ Interaktiivne töölaud
+         HG530000a                                 ✗ Rainmeter
+                                                   ✓ Integratsioonitarkvara
+Keel: et-EE                                        ✓ Klassikaline start menüü
+Juurutatud: Jah                                    ✓ Standardfunktsioonid
+Kasutaja: markus                                   ✓ Kaugjuhtimine
+Kinnituskood: 4262                                 ✓ Windows 10+
+Olek: VERIFIED                                     ✗ LiveTuner optimeerimised
+Räsi: 2da1e9ea32                                   ✓ Grupipoliitika
 
-↵  Laadi andmed uuesti (salvestamata muudatused lähevad kaotsi)
+ ↵  Laadi andmed uuesti (salvestamata muudatused lähevad kaotsi)
 ```

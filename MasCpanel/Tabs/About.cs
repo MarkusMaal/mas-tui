@@ -56,8 +56,9 @@ public class About(string? status) : TabBase
         foreach (var (i, kvp) in features.Index())
         {
             var col = _edition.Features.Any(f => f == kvp.Key) ? "-" : "8";
+            var pref = col == "-" ? "~-A✓~--" : "~-C✗~--";
             Console.SetCursorPosition(marginLeft, 4 + i);
-            ColorConsole.WriteLine($"~-{col} - {kvp.Value}~--");
+            ColorConsole.WriteLine($"~-- {pref}~-{col} {kvp.Value}~--");
         }
         Console.WriteLine("\n ↵  Laadi andmed uuesti (salvestamata muudatused lähevad kaotsi)");
     }
