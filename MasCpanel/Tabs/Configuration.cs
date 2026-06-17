@@ -10,9 +10,9 @@ namespace MasCpanel.Tabs;
 public class Configuration : TabBase
 {
 
-  private readonly string _desktopPreview;
-  private readonly string _uncommonPreview;
-  private readonly string _loginPreview;
+  private string? _desktopPreview;
+  private string? _uncommonPreview;
+  private string? _loginPreview;
   private readonly CommonConfig _config;
   private readonly string _masRoot = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas");
   private readonly Checkbox _logoCheck = new()
@@ -50,13 +50,7 @@ public class Configuration : TabBase
   public Configuration()
   {
     Program.L.StatusText = "Generating previews";
-    using var colorBlockRenderer = new ColorBlockRenderer(new RenderOptions
-    {
-      MaxHeight = 5
-    });
-    _desktopPreview = colorBlockRenderer.RenderFile(Path.Join(_masRoot, "bg_desktop.png"));
-    _uncommonPreview = colorBlockRenderer.RenderFile(Path.Join(_masRoot, "bg_uncommon.png"));
-    _loginPreview = colorBlockRenderer.RenderFile(Path.Join(_masRoot, "bg_login.png"));
+    ReloadPreviews();
     Program.L.StatusText = "Loading integration configuration";
     _config = new CommonConfig();
     _config.Load(_masRoot);
@@ -65,6 +59,17 @@ public class Configuration : TabBase
     _scheduleCheck.Value = _config.AllowScheduledTasks;
     Program.L.StatusText = "Loading color scheme";
     _colorScheme.LoadScheme(_masRoot);
+  }
+
+  private void ReloadPreviews()
+  {
+    using var colorBlockRenderer = new ColorBlockRenderer(new RenderOptions
+    {
+      MaxHeight = 5
+    });
+    _desktopPreview = colorBlockRenderer.RenderFile(Path.Join(_masRoot, "bg_desktop.png"));
+    _uncommonPreview = colorBlockRenderer.RenderFile(Path.Join(_masRoot, "bg_uncommon.png"));
+    _loginPreview = colorBlockRenderer.RenderFile(Path.Join(_masRoot, "bg_login.png"));
   }
 
   public override void ReceiveKey(object sender, ConsoleKey key)
@@ -102,21 +107,106 @@ public class Configuration : TabBase
         _config.PollRate -= 5;
         _config.Save(_masRoot);
         break;
+      case ConsoleKey.D1:
+      case ConsoleKey.NumPad1:
+        ShowFilePicker(sender,
+          (_, e) => CopyBackground(e.FileName, "bg_desktop.png"),
+          (_, _) => {});
+        break;
+      case ConsoleKey.D2:
+      case ConsoleKey.NumPad2:
+        ShowFilePicker(sender,
+          (_, e) => CopyBackground(e.FileName, "bg_login.png"),
+          (_, _) => {});
+        break;
+      case ConsoleKey.D3:
+      case ConsoleKey.NumPad3:
+        ShowFilePicker(sender, 
+          (_, e) => CopyBackground(e.FileName, "bg_uncommon.png"), 
+          (_, _) => {});
+        break;
+      case ConsoleKey.V:
+        SwitchBackground(sender);
+        break;
     }
     Console.WriteLine("\r   ");
   }
 
+  private void SwitchBackground(object sender)
+  {
+    if (sender is not MainScreen ms) return;
+    File.Copy( Path.Join(_masRoot, "bg_desktop.png"), Path.Join(_masRoot, "bg_temp.png"), true);
+    File.Copy( Path.Join(_masRoot, "bg_uncommon.png"), Path.Join(_masRoot, "bg_desktop.png"), true);
+    File.Copy( Path.Join(_masRoot, "bg_temp.png"), Path.Join(_masRoot, "bg_uncommon.png"), true);
+    File.Delete(Path.Join(_masRoot, "bg_temp.png"));
+    ReloadPreviews();
+    ms.Cls();
+  }
+
+  private void CopyBackground(string? source, string destination)
+  {
+    if (source == null) return;
+    if (!new FileInfo(source).Extension.Equals(".png", StringComparison.OrdinalIgnoreCase)) return;
+    File.Copy(source,  Path.Join(_masRoot, destination), true);
+    ReloadPreviews();
+  }
+
+  private void ShowFilePicker(object sender, FilePicker.FileOkHandler okHandle, FilePicker.FileCancelHandler cancelHandle)
+  {
+    var fp = new FilePicker();
+    fp.FileOk += okHandle;
+    fp.FileCancel += cancelHandle;
+    fp.FileChange += (sender, e) =>
+    {
+      if (Console.WindowWidth < 120) return;
+      if (sender is not FilePicker fp) return;
+      var fsI = new FileInfo(e.FileName ?? "");
+      var maxWide = new DirectoryInfo(fp.Directory).GetFileSystemInfos()
+        .OrderBy(fI => fI is not DirectoryInfo)
+        .ThenBy(fI => fI.Name)
+        .Where(fI => (fI.Attributes & FileAttributes.Hidden) == 0).Max(fI => fI.Name.Length + (fI is DirectoryInfo ? 1 : 0)) + 6;
+      for (var i = 0; i < Console.WindowHeight - 4; i++)
+      {
+        Console.SetCursorPosition(maxWide, 3 + i);
+        Console.WriteLine("".PadRight(Console.WindowWidth - 1 - maxWide));
+      }
+      if (!fsI.Exists || !fsI.Extension.Equals(".png", StringComparison.OrdinalIgnoreCase))
+      {
+        return;
+      }
+      using var colorBlockRenderer = new ColorBlockRenderer(new RenderOptions
+      {
+        MaxHeight = Console.WindowHeight - 4,
+        MaxWidth = Console.WindowWidth - 56
+      });
+      try
+      {
+        var preview = colorBlockRenderer.RenderFile(e.FileName ?? "");
+        ShowAnsiAtPosition(preview, maxWide + 1, 3);
+      }
+      catch
+      {
+        // ignored
+      }
+    };
+    fp.Show();
+    if (sender is MainScreen ms)
+    {
+      ms.Cls();
+    }
+  }
+
   private (int, int) GetAnsiDims(string ansi)
   {
-    return (ansi.Split('\n')[0].Split("\u001B[0m").Length, ansi.Split('\n').Length);
+    return (ansi.Split('\n')[0].Split("\e[0m").Length, ansi.Split('\n').Length);
   }
 
   private void ShowAnsiAtPosition(string ansi, int x, int y)
   {
-    foreach ((int Index, string Item) in ansi.Split('\n').Index<string>())
+    foreach (var (index, item) in ansi.Split('\n').Index())
     {
-      Console.SetCursorPosition(x, y + Index);
-      Console.Write(Item);
+      Console.SetCursorPosition(x, y + index);
+      Console.Write(item);
     }
     Console.ResetColor();
   }
@@ -142,8 +232,8 @@ public class Configuration : TabBase
   public override void Draw(object sender, EventArgs e)
   {
     Console.WriteLine("Taustad:");
-    (int num1, int _) = GetAnsiDims(_desktopPreview);
-    (int num2, int _) = GetAnsiDims(_loginPreview);
+    var (num1, _) = GetAnsiDims(_desktopPreview);
+    var (num2, _) = GetAnsiDims(_loginPreview);
     Console.SetCursorPosition(1, 5);
     ColorConsole.Write("~--Töölaud (~-D1~--)");
     ShowAnsiAtPosition(_desktopPreview, 1, 6);

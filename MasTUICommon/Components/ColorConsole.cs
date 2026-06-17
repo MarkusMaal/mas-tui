@@ -4,23 +4,30 @@ public abstract class ColorConsole
 {
     private static void HexStrToColor(string hex) // internal method, do not touch
     {
-        var bg = hex[0];
-        var fg = hex[1]; 
-        if ((bg == '-') && (fg == '-'))
+        try
         {
-            Console.ResetColor();
+            var bg = hex[0];
+            var fg = hex[1];
+            if ((bg == '-') && (fg == '-'))
+            {
+                Console.ResetColor();
+                return;
+            }
+
+            if (bg != '-')
+            {
+                var bgI = Convert.FromHexString("0" + bg)[0];
+                Console.BackgroundColor = (ConsoleColor)bgI;
+            }
+
+            if (fg == '-') return;
+            var fgI = Convert.FromHexString("0" + fg)[0];
+            Console.ForegroundColor = (ConsoleColor)fgI;
+        }
+        catch
+        {
             return;
         }
-
-        if (bg != '-')
-        {
-            var bgI = Convert.FromHexString("0" + bg)[0];
-            Console.BackgroundColor = (ConsoleColor)bgI;
-        }
-
-        if (fg == '-') return;
-        var fgI = Convert.FromHexString("0" + fg)[0];
-        Console.ForegroundColor = (ConsoleColor)fgI;
     }
 
     /// <summary>

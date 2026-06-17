@@ -13,13 +13,13 @@ public class Checkbox
 
     public void Draw()
     {
-        ColorConsole.Write($"~--[{(this.Value ? "~-A✓~--" : " ")}~--] ");
-        bool flag = false;
-        foreach (char ch in this.Label)
+        ColorConsole.Write($"~--[{(Value ? "~-A✓~--" : " ")}~--] ");
+        var flag = false;
+        foreach (var ch in Label)
         {
-            if ((int) ch == (int) this.Key && !flag)
+            if (ch == Key && !flag)
             {
-                ColorConsole.Write($"~--(~{this.KeyColor}{this.Key}~--)");
+                ColorConsole.Write($"~--(~{KeyColor}{Key}~--)");
                 flag = true;
             }
             else
