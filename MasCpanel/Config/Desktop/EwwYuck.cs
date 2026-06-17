@@ -4,16 +4,16 @@ namespace MasCpanel.Config.Desktop;
 public class EwwYuck
 {
     public List<DesktopEntry> Entries { get; set; } = [];
+    private string _cfgPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config", "eww",
+        "eww.yuck");
     
     public void LoadConfig()
     {
-        var cfgPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config", "eww",
-            "eww.yuck");
-        if (!File.Exists(cfgPath))
+        if (!File.Exists(_cfgPath))
         {
             throw new FileNotFoundException("Eww configuration file does not exist");
         }
-        TextReader tr = File.OpenText(cfgPath);
+        TextReader tr = File.OpenText(_cfgPath);
         var cfg = tr.ReadToEnd();
         tr.Close();
         tr.Dispose();
@@ -34,5 +34,38 @@ public class EwwYuck
                 });
             }
         }
+    }
+
+    public void SaveConfig()
+    {
+        TextReader tr = File.OpenText(_cfgPath);
+        var previousConfig = tr.ReadToEnd();
+        tr.Close();
+        tr.Dispose();
+        TextWriter writer = File.CreateText(_cfgPath);
+        const string bgToken = "background-image: url(";
+        const string dblClick = "/home/$USER/scripts/eww_dbl_click.sh";
+        const string tipToken = "button :tooltip";
+        var idx = 0;
+        foreach (var l in previousConfig.Split('\n'))
+        {
+            if (l.Contains(bgToken))
+            {
+                var pref = l.Split(bgToken)[0];   
+                writer.WriteLine(pref + bgToken  + "'" + Entries[idx].Image + "')\" (");
+            }
+            else if (l.Contains(tipToken))
+            {
+                writer.WriteLine($"              {tipToken} \"{Entries[idx].Tooltip}\" :onclick \"{dblClick} {Entries[idx].Executable}\" \"\")");
+                idx++;
+            }
+            else
+            {
+                writer.WriteLine(l);
+            }
+        }
+
+        writer.Close();
+        writer.Dispose();
     }
 }

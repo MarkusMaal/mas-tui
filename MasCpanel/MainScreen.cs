@@ -1,3 +1,4 @@
+using System.Reflection;
 using ConsoleImage.Core;
 using MasCpanel.Tabs;
 using MasTUICommon;
@@ -18,7 +19,7 @@ public class MainScreen
     {
         using var colorBlockRenderer = new BrailleRenderer(new RenderOptions
         {
-            MaxHeight = Console.WindowHeight - 1,
+            MaxHeight = Console.WindowHeight - 2,
             MaxWidth = Console.WindowWidth,
         });
         _background = colorBlockRenderer.RenderFile(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas", "bg_common.png"));
@@ -121,8 +122,33 @@ public class MainScreen
     public void Cls()
     {
         Console.Clear();
-        if (_background == null) return;
-        Console.Write(_background);
+        Console.SetCursorPosition(0, 1);
+        if (_background != null)
+        {
+            Console.Write(_background);
+            Console.SetCursorPosition(0, 0);
+        }
+
+        const string ExitHint = "Q/Esc ";
+        var verStr = Assembly.GetExecutingAssembly().GetName().Version?.ToString(4);
+        if (verStr == null) throw new NullReferenceException("Version number is undefined!");
+        while (verStr.EndsWith(".0"))
+        {
+            verStr = verStr[..^2];
+        }
+
+        var device = _edition.BuildNo[^1] switch
+        {
+            'a' => "arvuti",
+            'b' => "virtuaalarvuti",
+            'c' => "tahvelarvuti",
+            'd' => "telefoni",
+            'e' => "serveri",
+            _ => "asjade"
+        };
+        ColorConsole.Write("~1F" + ($"Markuse {device} juhtpaneel " + verStr).PadBoth(Console.WindowWidth - 2) + " ");
+        Console.CursorLeft -= ExitHint.Length + 1;
+        ColorConsole.Write($"~1C{ExitHint}~--");
         Console.SetCursorPosition(0, 0);
     }
 }

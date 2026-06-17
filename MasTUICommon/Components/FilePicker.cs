@@ -25,7 +25,7 @@ public class FilePicker
 
     private bool InvertDirection { get; set; } = true;
     
-    private readonly int _maxHeight = Console.WindowHeight - 4;
+    private readonly int _maxHeight = Console.WindowHeight - 5;
 
     public FilePicker(string? startDirectory = null)
     {
@@ -38,7 +38,7 @@ public class FilePicker
 
     public void Show()
     {
-        Console.Clear();
+        Cls();
         while (!Break)
         {
             Draw();
@@ -46,11 +46,19 @@ public class FilePicker
         }
     }
 
+    private void Cls()
+    {
+        Console.Clear();
+        const string exitHint = "Q/Esc ";
+        ColorConsole.Write("~1F" + ("Failisirvija").PadBoth(Console.WindowWidth - 2) + " ~--");
+        Console.CursorLeft -= exitHint.Length + 1;
+        ColorConsole.WriteLine($"~1C{exitHint}~--");
+        Console.WriteLine($"Asukoht: {Directory}".PadBoth(Console.WindowWidth - 2));
+    }
+
     private void Draw()
     {
-        Console.SetCursorPosition(0, 0);
-        ColorConsole.Write($"~-BFailisirvija\n~--Asukoht: ~-F{Directory}");
-        Console.SetCursorPosition(0, 3);
+        Console.SetCursorPosition(0, 2);
         var fsInfo = new DirectoryInfo(Directory)
             .GetFileSystemInfos("*.*", SearchOption.TopDirectoryOnly)
             .OrderBy(fI => fI is not DirectoryInfo)
@@ -79,6 +87,7 @@ public class FilePicker
             var fName = $"{f.Name}{slash}".PadRight(maxWidth);
             ColorConsole.WriteLine($"~{c} {arrows[0]} {fName} {arrows[1]} ~--");
         }
+        Console.SetCursorPosition(0, 0);
     }
 
     private void CheckIndex()
@@ -114,10 +123,10 @@ public class FilePicker
                 break;
             case ConsoleKey.Backspace:
             case ConsoleKey.LeftArrow:
-                Console.Clear();
                 SelectedIndex = 0;
                 Skip = 0;
                 Directory = System.IO.Directory.GetParent(Directory)?.FullName ?? Directory;
+                Cls();
                 break;
             case ConsoleKey.Escape:
             case ConsoleKey.Q:
@@ -131,13 +140,13 @@ public class FilePicker
                 }
                 else if (System.IO.Directory.Exists(FileName))
                 {
-                    Console.Clear();
                     SelectedIndex = 0;
                     Skip = 0;
                     // check if the directory is accessible before switching to it
                     try { _ = new DirectoryInfo(FileName).GetFiles(); }
                     catch (UnauthorizedAccessException) { break; }
                     Directory = FileName;
+                    Cls();
                 }
                 break;
             case ConsoleKey.PageUp:

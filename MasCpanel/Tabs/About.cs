@@ -36,7 +36,7 @@ public class About(string? status, Edition edition) : TabBase
         Console.WriteLine($"Kasutaja: {edition.Username}");
         Console.WriteLine($"Kinnituskood: {edition.Pin}");
         Console.WriteLine($"Olek: {status}");
-        if (edition.Hash != null && edition.Hash.Length < 11)
+        if (edition.Hash is { Length: > 11 })
         {
             Console.WriteLine($"Räsi: {edition.Hash[..10]}");
         }

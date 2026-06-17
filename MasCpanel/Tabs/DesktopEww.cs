@@ -7,13 +7,18 @@ namespace MasCpanel.Tabs;
 public class DesktopEww : TabBase
 {
     private EwwYuck _ewwCfg;
-    private Menu _menu;
+    private Menu? _menu;
 
     public DesktopEww()
     {
         Program.L.StatusText = "Loading eww configuration";
         _ewwCfg = new EwwYuck();
         _ewwCfg.LoadConfig();
+        ConfigureMenu();
+    }
+
+    private void ConfigureMenu()
+    {
         _menu = new Menu
         {
             ActiveColor = new Color { BackgroundColor = 7, ForegroundColor = 0 },
@@ -43,6 +48,37 @@ public class DesktopEww : TabBase
                 {
                     _menu.SelectedIndex++;
                 }
+                break;
+            case ConsoleKey.Enter:
+                string? newName = null;
+                string? newLocation = null;
+                string? newIcon = null;
+                while (newName == null || newLocation == null || newIcon == null)
+                {
+                    Console.SetCursorPosition(4, 3 + _menu.SelectedIndex);
+                    var spaces = "".PadRight(_menu.TextPadding - 6);
+                    ColorConsole.Write($"~{_menu.ActiveColor}{spaces}");
+                    Console.SetCursorPosition(4, 3 + _menu.SelectedIndex);
+                    ColorConsole.Write($"~--");
+                    newName = Console.ReadLine();
+                    Console.SetCursorPosition(10, 4 + _ewwCfg.Entries.Count);
+                    Console.Write("".PadRight(Console.WindowWidth - 10));
+                    Console.SetCursorPosition(10, 4 + _ewwCfg.Entries.Count);
+                    newLocation = Console.ReadLine();
+                    Console.SetCursorPosition(8, 5 + _ewwCfg.Entries.Count);
+                    Console.Write("".PadRight(Console.WindowWidth - 8));
+                    Console.SetCursorPosition(8, 5 + _ewwCfg.Entries.Count);
+                    newIcon = Console.ReadLine();
+                }
+
+                _ewwCfg.Entries[_menu.SelectedIndex] = new DesktopEntry
+                {
+                    Executable = newLocation,
+                    Image = newIcon,
+                    Tooltip = newName
+                };
+                ConfigureMenu();
+                _ewwCfg.SaveConfig();
                 break;
         }
     }
