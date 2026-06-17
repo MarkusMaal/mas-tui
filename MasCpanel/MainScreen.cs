@@ -28,26 +28,36 @@ public class MainScreen
             ActiveColor = new Color { BackgroundColor = 0xB, ForegroundColor = 0x0 },
             DefaultColor = new Color { BackgroundColor = 0x8, ForegroundColor = 0x0 }
         };
-        t.AddTab(new TabItem { Title = "Skriptid" });
-        t.AddTab(new TabItem { Title = "MarkuStation" });
+        if (!_edition.EditionName.ToLower().StartsWith("basic"))
+        {
+            t.AddTab(new TabItem { Title = "Skriptid" });
+            t.AddTab(new TabItem { Title = "MarkuStation" });
+        }
         t.AddTab(new TabItem { Title = "Konfiguratsioon" });
         if (_edition.Features!.Contains("TS"))
         {
             t.AddTab(new TabItem { Title = "Töölaud" });
         }
         t.AddTab(new TabItem { Title = "Teave" });
+        TabBase[] tabs = [];
 
-        TabBase[] tabs = [
-            new Home(),
+        if (!_edition.EditionName.ToLower().StartsWith("basic"))
+        {
+            tabs = [
+                new Home(),
             new MarkuStation(),
             new Configuration(),
-            _edition.Features!.Contains("TS") ? 
+            _edition.Features!.Contains("TS") ?
                 OperatingSystem.IsLinux() &&
                 File.Exists(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config", "eww", "eww.yuck")) &&
                 Environment.GetEnvironmentVariable("XDG_CURRENT_DESKTOP") == "Hyprland"
                     ? new DesktopEww() : new Desktop() : new About(VerifileStatus, _edition),
             new About(VerifileStatus, _edition)
-        ];
+            ];
+        } else
+        {
+            tabs = [new Configuration(), new About(VerifileStatus, _edition)];
+        }
 
         foreach (var (i, tab) in tabs.Index())
         {

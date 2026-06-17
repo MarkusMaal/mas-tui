@@ -20,7 +20,10 @@ public class About(string? status, Edition edition) : TabBase
         var s = "      ";
         ColorConsole.WriteLine($"~{c}{s}~--\n ~{c}{s}~--\n ~{c}{s}~--");
         Console.SetCursorPosition(9, 3);
-        var fName = $"Markuse arvuti asjad {edition.Version} – {edition.Name}";
+        var device = "arvuti";
+        if (edition.BuildNo.EndsWith('b')) device = "virtuaalarvuti";
+        if (edition.BuildNo.EndsWith('c')) device = "tahvelarvuti";
+        var fName = $"Markuse {device} asjad {edition.Version} – {edition.Name}";
         Console.Write(fName);
         Console.SetCursorPosition(9, 4);
         Console.Write(edition.EditionName);
@@ -33,7 +36,10 @@ public class About(string? status, Edition edition) : TabBase
         Console.WriteLine($"Kasutaja: {edition.Username}");
         Console.WriteLine($"Kinnituskood: {edition.Pin}");
         Console.WriteLine($"Olek: {status}");
-        Console.WriteLine($"Räsi: {edition.Hash[..10]}");
+        if (edition.Hash != null && edition.Hash.Length < 11)
+        {
+            Console.WriteLine($"Räsi: {edition.Hash[..10]}");
+        }
         var features = new Dictionary<string, string>()
         {
             { "TS", "Interaktiivne töölaud" },
@@ -58,7 +64,9 @@ public class About(string? status, Edition edition) : TabBase
             Console.SetCursorPosition(marginLeft, 4 + i);
             ColorConsole.WriteLine($"~-- {pref}~-{col} {kvp.Value}~--");
         }
-        Console.WriteLine("\n ↵  Laadi andmed uuesti (salvestamata muudatused lähevad kaotsi)");
+        var retChar = "↵";
+        if (OperatingSystem.IsWindows()) { retChar = "[ ENTER ]"; }
+        Console.WriteLine($"\n {retChar}  Laadi andmed uuesti (salvestamata muudatused lähevad kaotsi)");
     }
 
     public override void ReceiveKey(object sender, ConsoleKey key)

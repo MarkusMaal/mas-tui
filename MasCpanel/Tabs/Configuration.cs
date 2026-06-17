@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Drawing;
 using ConsoleImage.Core;
 using MasCommon;
@@ -59,6 +60,32 @@ public class Configuration : TabBase
     _scheduleCheck.Value = _config.AllowScheduledTasks;
     Program.L.StatusText = "Loading color scheme";
     _colorScheme.LoadScheme(_masRoot);
+  }
+
+  private void ReloadExplorer()
+  {
+    if (!OperatingSystem.IsWindows()) return;
+    Process pwsh = new()
+    {
+        StartInfo = {
+            FileName = "powershell",
+            UseShellExecute = true,
+            Arguments = "-ep Bypass C:\\mas\\update_bg.ps1",
+            Verb = "runas"
+        }
+    };
+    try
+    {
+        pwsh.Start();
+        pwsh.WaitForExit();
+    } catch
+    {
+        return;
+    }
+    foreach (var p in Process.GetProcessesByName("explorer"))
+    {
+        p.Kill();
+    }
   }
 
   private void ReloadPreviews()
@@ -140,6 +167,7 @@ public class Configuration : TabBase
     File.Copy( Path.Join(_masRoot, "bg_temp.png"), Path.Join(_masRoot, "bg_uncommon.png"), true);
     File.Delete(Path.Join(_masRoot, "bg_temp.png"));
     ReloadPreviews();
+    ReloadExplorer();
     ms.Cls();
   }
 
@@ -149,6 +177,7 @@ public class Configuration : TabBase
     if (!new FileInfo(source).Extension.Equals(".png", StringComparison.OrdinalIgnoreCase)) return;
     File.Copy(source,  Path.Join(_masRoot, destination), true);
     ReloadPreviews();
+    ReloadExplorer();
   }
 
   private void ShowFilePicker(object sender, FilePicker.FileOkHandler okHandle, FilePicker.FileCancelHandler cancelHandle)

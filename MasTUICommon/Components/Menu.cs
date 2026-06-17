@@ -68,7 +68,7 @@ public class Menu
             var mChar = (item.Key == SelectedIndex) ? "<>" : "  ";
             ColorConsole.WriteLine($"~{pCol} {mChar[0]} {item.Value.Title.PadRight(TextPadding - 5)}{mChar[1]} ~--");
         }
-
+        if (Items.Count == 0) return;
         var tip = Items[SelectedIndex].Tooltip;
         if (tip == null) return;
         Console.WriteLine();

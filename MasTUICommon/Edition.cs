@@ -55,7 +55,7 @@ public class Edition
     /// <summary>
     /// Verifile 1.0 hash
     /// </summary>
-    public string Hash { get; set; }
+    public string? Hash { get; set; }
 
     /// <summary>
     /// Root directory for Markus' stuff deployment
@@ -76,6 +76,7 @@ public class Edition
         Features = lines[8].Split('-').ToList();
         Pin = lines[9];
         Name = lines[10];
+        if (lines.Length < 12) return;
         Hash = lines[11];
     }
 }

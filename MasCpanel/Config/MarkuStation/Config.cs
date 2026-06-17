@@ -55,9 +55,10 @@ public class Config
     
     public void LoadConfig()
     {
-        
+        var sFile = Path.Join(_masRoot, "setting.txt");
+        if (!File.Exists(sFile)) return;
         // general settings
-        TextReader tr = File.OpenText(Path.Join(_masRoot, "setting.txt"));
+        TextReader tr = File.OpenText(sFile);
         CreepypastaIntro = tr.ReadLine() == "true";
         SpecialIntro = tr.ReadLine() == "true";
         PlayIntros = tr.ReadLine() == "true";
