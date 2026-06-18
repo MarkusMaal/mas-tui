@@ -120,6 +120,7 @@ public class MarkuStation : TabBase
         var maxWidth = Program.MsConfig.GetGames().Length > 0 ? Math.Max(
             Program.MsConfig.GetGames().Max(g => g.Name.Length) + 23 +
             Program.MsConfig.GetGames().Max(g => g.Executable.Length), minWidth) : minWidth;
+        while (maxWidth - 8  > Console.WindowWidth) maxWidth--;
         Console.WriteLine($"\u2554\u2550{label}".PadRight(maxWidth - 3 - label.Length, '\u2550') +
                           "\u2557");
         Game[] displayList = [];
@@ -137,6 +138,7 @@ public class MarkuStation : TabBase
                     arrows = "<>";
                 }
                 var col = arrows == "<>" ? "~70" : "~--";
+                while (rowLabel.Length > maxWidth - 16) rowLabel = rowLabel[..^4] + "...";
                 ColorConsole.WriteLine($"~--\u2551 {col}{arrows[0]} " + rowLabel.PadRight(maxWidth - 16) +
                                        $" {arrows[1]}~-- \u2551");
             }
@@ -151,7 +153,9 @@ public class MarkuStation : TabBase
             }
         }
         var hint = " U Lisa mäng   DEL Kustuta   \u21B5 Muuda   \u2195 Vali mäng ";
-        Console.WriteLine($"\u255A".PadRight(maxWidth - 10 - hint.Length, '\u2550') +
+        var fPad = maxWidth - 10 - hint.Length;
+        if (fPad < 0) fPad = 0;
+        Console.WriteLine($"\u255A".PadRight(fPad, '\u2550') +
                           $"{hint}\u2550\u255D");
         Console.WriteLine();
 

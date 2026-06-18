@@ -36,6 +36,7 @@ namespace MasTUICommon.Components
                 if (pad % 2 != 0) pad++;
                 var rawOutput = item.Value.Title.PadBoth(pad);
                 rawOutput = isSelected ? " < " + rawOutput + " > " : "   " + rawOutput + "   ";
+                if (Console.CursorLeft > Console.WindowWidth - pad) Console.WriteLine();
                 ColorConsole.Write($"~{itemColor}{rawOutput}~--");
             }
             Console.WriteLine("\n");
@@ -54,8 +55,8 @@ namespace System
     {
         public static string PadBoth(this string str, int length)
         {
-            int spaces = length - str.Length;
-            int padLeft = spaces / 2 + str.Length;
+            var spaces = length - str.Length;
+            var padLeft = spaces / 2 + str.Length;
             return str.PadLeft(padLeft).PadRight(length);
         }
     }

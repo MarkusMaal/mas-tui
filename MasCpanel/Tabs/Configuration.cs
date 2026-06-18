@@ -267,8 +267,10 @@ public class Configuration : TabBase
   public override void Draw(object sender, EventArgs e)
   {
     if (_desktopPreview == null || _loginPreview == null || _uncommonPreview == null) return;
-    Console.WriteLine("Taustad:");
-    var (num1, _) = GetAnsiDims(_desktopPreview);
+    Console.Write("Taustad:");
+    Console.CursorLeft += 2;
+    ColorConsole.WriteLine("~--(~-CV~--)aheta miniversioon töölauataustaga");
+    var (num1, h) = GetAnsiDims(_desktopPreview);
     var (num2, _) = GetAnsiDims(_loginPreview);
     Console.SetCursorPosition(1, 5);
     ColorConsole.Write("~--Töölaud (~-D1~--)");
@@ -276,11 +278,18 @@ public class Configuration : TabBase
     Console.SetCursorPosition(2 + num1, 5);
     ColorConsole.Write("~--Logimisekraan (~-F2~--)");
     ShowAnsiAtPosition(_loginPreview, 2 + num1, 6);
-    Console.SetCursorPosition(4 + num1 + num2, 5);
-    ColorConsole.Write("~--Miniversioon (~-93~--)");
-    ShowAnsiAtPosition(_uncommonPreview, 4 + num1 + num2, 6);
-    Console.SetCursorPosition(10, 3);
-    ColorConsole.WriteLine("~--(~-CV~--)aheta miniversioon töölauataustaga");
+    if (4 + num1 + num2 + GetAnsiDims(_uncommonPreview).Item1 < Console.WindowWidth)
+    {
+      Console.SetCursorPosition(4 + num1 + num2, 5);
+      ColorConsole.Write("~--Miniversioon (~-93~--)");
+      ShowAnsiAtPosition(_uncommonPreview, 4 + num1 + num2, 6);
+    }
+    else
+    {
+      Console.SetCursorPosition(1, 6 + h);
+      ColorConsole.Write("~--Miniversioon (~-93~--)");
+    }
+
     Console.SetCursorPosition(1, 12);
     Console.WriteLine("Integratsioon:");
     Console.CursorLeft = 2;
