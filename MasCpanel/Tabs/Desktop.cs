@@ -58,5 +58,7 @@ public class Desktop : TabBase
     public override void Draw(object sender, EventArgs e)
     {
         _menu.Draw();
+        Console.CursorLeft++;
+        ColorConsole.WriteLine("~-CNB!~-- Markuse arvuti töölaua süsteemi redigeerimine pole selles Markuse arvuti juhtpaneeli versioonis saadaval");
     }
 }

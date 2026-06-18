@@ -11,15 +11,18 @@ namespace MasCpanel;
 public class MainScreen
 {
     private bool _reload;
-    public string? VerifileStatus { get; set; }
+    public string? VerifileStatus { get; init; }
     private string? _background;
     
     private readonly Edition _edition = new();
+    
+    private System.Drawing.Color? _backgroundColor;
+    private System.Drawing.Color? _foregroundColor;
     public void Show()
     {
         using var colorBlockRenderer = new BrailleRenderer(new RenderOptions
         {
-            MaxHeight = Console.WindowHeight - 2,
+            MaxHeight = Console.WindowHeight - 4,
             MaxWidth = Console.WindowWidth,
         });
         _background = colorBlockRenderer.RenderFile(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas", "bg_common.png"));
@@ -29,7 +32,7 @@ public class MainScreen
             ActiveColor = new Color { BackgroundColor = 0xB, ForegroundColor = 0x0 },
             DefaultColor = new Color { BackgroundColor = 0x8, ForegroundColor = 0x0 }
         };
-        if (!_edition.EditionName.ToLower().StartsWith("basic"))
+        if (!_edition.EditionName.StartsWith("basic", StringComparison.OrdinalIgnoreCase))
         {
             t.AddTab(new TabItem { Title = "Skriptid" });
             t.AddTab(new TabItem { Title = "MarkuStation" });
@@ -40,14 +43,16 @@ public class MainScreen
             t.AddTab(new TabItem { Title = "Töölaud" });
         }
         t.AddTab(new TabItem { Title = "Teave" });
-        TabBase[] tabs = [];
+        TabBase[] tabs;
 
-        if (!_edition.EditionName.ToLower().StartsWith("basic"))
+        var config = new Configuration();
+
+        if (!_edition.EditionName.StartsWith("basic", StringComparison.OrdinalIgnoreCase))
         {
             tabs = [
                 new Home(),
             new MarkuStation(),
-            new Configuration(),
+            config,
             _edition.Features!.Contains("TS") ?
                 OperatingSystem.IsLinux() &&
                 File.Exists(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config", "eww", "eww.yuck")) &&
@@ -57,8 +62,11 @@ public class MainScreen
             ];
         } else
         {
-            tabs = [new Configuration(), new About(VerifileStatus, _edition)];
+            tabs = [config, new About(VerifileStatus, _edition)];
         }
+
+        _backgroundColor = config.ColorScheme.BackgroundColor;
+        _foregroundColor = config.ColorScheme.ForegroundColor;
 
         foreach (var (i, tab) in tabs.Index())
         {
@@ -129,7 +137,7 @@ public class MainScreen
             Console.SetCursorPosition(0, 0);
         }
 
-        const string ExitHint = "Q/Esc ";
+        const string exitHint = "Q/Esc ";
         var verStr = Assembly.GetExecutingAssembly().GetName().Version?.ToString(4);
         if (verStr == null) throw new NullReferenceException("Version number is undefined!");
         while (verStr.EndsWith(".0"))
@@ -146,9 +154,14 @@ public class MainScreen
             'e' => "serveri",
             _ => "asjade"
         };
-        ColorConsole.Write("~1F" + ($"Markuse {device} juhtpaneel " + verStr).PadBoth(Console.WindowWidth - 2) + " ");
-        Console.CursorLeft -= ExitHint.Length + 1;
-        ColorConsole.Write($"~1C{ExitHint}~--");
+
+        var ansiBg = $"\e[48;2;{Program.Background.R};{Program.Background.G};{Program.Background.B}m";
+        var ansiFg = $"\e[38;2;{Program.Foreground.R};{Program.Foreground.G};{Program.Foreground.B}m";
+        ColorConsole.Write(
+            $"~--{ansiBg}{ansiFg}" + ($"Markuse {device} juhtpaneel " + verStr).PadBoth(Console.WindowWidth - 2) + " ");
+
+        Console.CursorLeft -= exitHint.Length + 1;
+        ColorConsole.Write($"~--{ansiBg}\e[91m{exitHint}~--");
         Console.SetCursorPosition(0, 0);
     }
 }

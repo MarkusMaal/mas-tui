@@ -6,7 +6,8 @@ namespace MasCpanel.Tabs;
 
 public class MarkuStation : TabBase
 {
-    private int SelectedGame { get; set; } = 0;
+    private int SelectedGame { get; set; }
+    private int Skip { get; set; }
     public override void ReceiveKey(object sender, ConsoleKey key)
     {
         Console.Write("\r   ");
@@ -14,9 +15,11 @@ public class MarkuStation : TabBase
         {
             case ConsoleKey.DownArrow:
                 SelectedGame++;
+                if (SelectedGame >= Skip + 5) Skip++;
                 break;
             case ConsoleKey.UpArrow:
                 SelectedGame--;
+                if (SelectedGame < Skip) Skip--;
                 break;
             case ConsoleKey.L:
                 Program.MsConfig.PlayIntros = !Program.MsConfig.PlayIntros;
@@ -58,8 +61,16 @@ public class MarkuStation : TabBase
                 break;
         }
 
-        if (SelectedGame < 0) SelectedGame = 0;
-        else if (SelectedGame > Program.MsConfig.GetGames().Length - 1) SelectedGame = Program.MsConfig.GetGames().Length - 1;
+        if (SelectedGame < 0)
+        {
+            SelectedGame = 0;
+            Skip = 0;
+        }
+        else if (SelectedGame > Program.MsConfig.GetGames().Length - 1)
+        {
+            SelectedGame = Program.MsConfig.GetGames().Length - 1;
+            Skip = Program.MsConfig.GetGames().Length - 5;
+        }
     }
 
     private void EditGame()
@@ -95,7 +106,7 @@ public class MarkuStation : TabBase
         return (name, loc);
     }
 
-    private void CleanTable()
+    private static void CleanTable()
     {
         Console.SetCursorPosition(0, 3);
         Console.Write("".PadRight(Console.WindowWidth * 7));
@@ -115,29 +126,16 @@ public class MarkuStation : TabBase
         if (Program.MsConfig.GetGames().Length != 0)
         {
             var padding = Program.MsConfig.GetGames().Max(g => g.Name.Length) + 4;
-            var skip = Math.Min(SelectedGame - 4, Program.MsConfig.GetGames().Length - 5);
-            if (SelectedGame < 4) skip = 0;
-            displayList = Program.MsConfig.GetGames().Skip(skip).Take(5).ToArray();
+            displayList = Program.MsConfig.GetGames().Skip(Skip).Take(5).ToArray();
             foreach (var (index, game) in displayList.Index())
             {
+                var actualIndex = Skip + index;
                 var rowLabel = game.Name.PadRight(padding) + game.Executable;
                 var arrows = "  ";
-                if ((skip == 0 || displayList.Length < 5) && index == SelectedGame )
+                if (actualIndex == SelectedGame)
                 {
                     arrows = "<>";
                 }
-                else if (displayList.Length == 5 && (skip < Program.MsConfig.GetGames().Length - 5))
-                {
-                    if (skip != 0 && 4 == index)
-                    {
-                        arrows = "<>";
-                    }
-                }
-                else if (displayList.Length == 5 && (SelectedGame == Program.MsConfig.GetGames().Length - 5 + index))
-                {
-                    arrows = "<>";
-                }
-
                 var col = arrows == "<>" ? "~70" : "~--";
                 ColorConsole.WriteLine($"~--\u2551 {col}{arrows[0]} " + rowLabel.PadRight(maxWidth - 16) +
                                        $" {arrows[1]}~-- \u2551");
@@ -178,7 +176,7 @@ public class MarkuStation : TabBase
             Label = "Luba introd",
             Value = Program.MsConfig.PlayIntros
         }.Draw();
-        ColorConsole.WriteLine(("~--\t\t(~-DM~--)onitor režiim: " + monitorMode).PadRight(maxWidth / 2));
+        ColorConsole.WriteLine("~--\t\t(~-DM~--)onitor režiim: " + (monitorMode).PadRight(21));
         ++Console.CursorLeft;
         new Checkbox()
         {

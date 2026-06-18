@@ -36,7 +36,7 @@ public class Configuration : TabBase
     },
     Label = "Luba ajastatud sündmused"
   };
-  private readonly Checkbox _desktopCheck = new Checkbox
+  private readonly Checkbox _desktopCheck = new()
   {
     Key = 't',
     KeyColor = new Color
@@ -46,7 +46,7 @@ public class Configuration : TabBase
     },
     Label = "Käivita töölauamärkmed käivitumisel"
   };
-  private readonly Scheme _colorScheme = new();
+  public readonly Scheme ColorScheme = new();
 
   public Configuration()
   {
@@ -59,10 +59,12 @@ public class Configuration : TabBase
     _desktopCheck.Value = _config.AutostartNotes;
     _scheduleCheck.Value = _config.AllowScheduledTasks;
     Program.L.StatusText = "Loading color scheme";
-    _colorScheme.LoadScheme(_masRoot);
+    ColorScheme.LoadScheme(_masRoot);
+    Program.Background = ColorScheme.BackgroundColor;
+    Program.Foreground = ColorScheme.ForegroundColor;
   }
 
-  private void ReloadExplorer()
+  private static void ReloadExplorer()
   {
     if (!OperatingSystem.IsWindows()) return;
     Process pwsh = new()
@@ -70,7 +72,7 @@ public class Configuration : TabBase
         StartInfo = {
             FileName = "powershell",
             UseShellExecute = true,
-            Arguments = "-ep Bypass C:\\mas\\update_bg.ps1",
+            Arguments = @"-ep Bypass C:\mas\update_bg.ps1",
             Verb = "runas"
         }
     };
@@ -182,15 +184,17 @@ public class Configuration : TabBase
 
   private void ShowFilePicker(object sender, FilePicker.FileOkHandler okHandle, FilePicker.FileCancelHandler cancelHandle)
   {
-    var fp = new FilePicker();
+    var ansiBg = $"\e[48;2;{Program.Background.R};{Program.Background.G};{Program.Background.B}m";
+    var ansiFg = $"\e[38;2;{Program.Foreground.R};{Program.Foreground.G};{Program.Foreground.B}m";
+    var fp = new FilePicker(ansiBg, ansiFg);
     fp.FileOk += okHandle;
     fp.FileCancel += cancelHandle;
-    fp.FileChange += (sender, e) =>
+    fp.FileChange += (o, e) =>
     {
       if (Console.WindowWidth < 120) return;
-      if (sender is not FilePicker fp) return;
+      if (o is not FilePicker filePicker) return;
       var fsI = new FileInfo(e.FileName ?? "");
-      var maxWide = new DirectoryInfo(fp.Directory).GetFileSystemInfos()
+      var maxWide = new DirectoryInfo(filePicker.Directory).GetFileSystemInfos()
         .OrderBy(fI => fI is not DirectoryInfo)
         .ThenBy(fI => fI.Name)
         .Where(fI => (fI.Attributes & FileAttributes.Hidden) == 0).Max(fI => fI.Name.Length + (fI is DirectoryInfo ? 1 : 0)) + 6;
@@ -243,23 +247,26 @@ public class Configuration : TabBase
   private void EditBackground()
   {
     Console.SetCursorPosition(50, 13);
-    Console.Write("Taust:  \t#      ");
+    ColorConsole.Write($"~--Taust:  \t{ColorScheme.BackgroundToAnsi()} ~-- #      ");
     Console.CursorLeft -= 6;
-    _colorScheme.BackgroundColor = ColorTranslator.FromHtml("#" + Console.ReadLine());
-    _colorScheme.SaveScheme(_masRoot);
+    ColorScheme.BackgroundColor = ColorTranslator.FromHtml("#" + Console.ReadLine()?.ToUpper());
+    ColorScheme.SaveScheme(_masRoot);
+    Program.Background = ColorScheme.BackgroundColor;
   }
 
   private void EditForeground()
   {
     Console.SetCursorPosition(50, 14);
-    Console.Write("Esiplaan:  \t#      ");
+    ColorConsole.Write($"~--Esiplaan:  \t{ColorScheme.ForegroundToAnsi()} ~-- #      ");
     Console.CursorLeft -= 6;
-    _colorScheme.ForegroundColor = ColorTranslator.FromHtml("#" + Console.ReadLine());
-    _colorScheme.SaveScheme(_masRoot);
+    ColorScheme.ForegroundColor = ColorTranslator.FromHtml("#" + Console.ReadLine()?.ToUpper());
+    ColorScheme.SaveScheme(_masRoot);
+    Program.Foreground = ColorScheme.ForegroundColor;
   }
 
   public override void Draw(object sender, EventArgs e)
   {
+    if (_desktopPreview == null || _loginPreview == null || _uncommonPreview == null) return;
     Console.WriteLine("Taustad:");
     var (num1, _) = GetAnsiDims(_desktopPreview);
     var (num2, _) = GetAnsiDims(_loginPreview);
@@ -289,8 +296,8 @@ public class Configuration : TabBase
     Console.SetCursorPosition(50, 12);
     Console.WriteLine("Värvid:");
     Console.SetCursorPosition(50, 13);
-    ColorConsole.WriteLine("~--Ta(~-4u~--)st:\t" + _colorScheme.BackgroundToHexString());
+    ColorConsole.WriteLine($"~--Ta(~-4u~--)st:\t{ColorScheme.BackgroundToAnsi()} ~-- {ColorScheme.BackgroundToHexString()}");
     Console.SetCursorPosition(50, 14);
-    ColorConsole.WriteLine("~--(~-2E~--)siplaan:\t" + _colorScheme.ForegroundToHexString());
+    ColorConsole.WriteLine($"~--(~-2E~--)siplaan:\t{ColorScheme.ForegroundToAnsi()} ~-- {ColorScheme.ForegroundToHexString()}");
   }
 }

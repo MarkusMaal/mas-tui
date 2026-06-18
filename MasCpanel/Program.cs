@@ -1,5 +1,6 @@
 ﻿using MasCommon;
 using MasTUICommon;
+using Color = System.Drawing.Color;
 
 namespace MasCpanel
 {
@@ -7,6 +8,9 @@ namespace MasCpanel
   {
     public static readonly Loader L = new();
     public static readonly Config.MarkuStation.Config MsConfig = new();
+    
+    public static Color Background = Color.DimGray;
+    public static Color Foreground = Color.White;
 
     public static void Reload()
     {

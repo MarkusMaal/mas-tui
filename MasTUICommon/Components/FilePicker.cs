@@ -27,13 +27,18 @@ public class FilePicker
     
     private readonly int _maxHeight = Console.WindowHeight - 5;
 
-    public FilePicker(string? startDirectory = null)
+    private readonly string _ansiBg;
+    private readonly string _ansiFg;
+
+    public FilePicker(string ansiBg = "\e[100m", string ansiFg = "\e[97m", string? startDirectory = null)
     {
         if (startDirectory != null)
         {
             StartDirectory = startDirectory;
         }
         Directory = StartDirectory;
+        _ansiBg = ansiBg;
+        _ansiFg = ansiFg;
     }
 
     public void Show()
@@ -50,9 +55,9 @@ public class FilePicker
     {
         Console.Clear();
         const string exitHint = "Q/Esc ";
-        ColorConsole.Write("~1F" + ("Failisirvija").PadBoth(Console.WindowWidth - 2) + " ~--");
+        ColorConsole.Write("~--" + _ansiBg + _ansiFg + ("Failisirvija").PadBoth(Console.WindowWidth - 2) + " ~--");
         Console.CursorLeft -= exitHint.Length + 1;
-        ColorConsole.WriteLine($"~1C{exitHint}~--");
+        ColorConsole.WriteLine($"~--{_ansiBg}\e[91m{exitHint}~--");
         Console.WriteLine($"Asukoht: {Directory}".PadBoth(Console.WindowWidth - 2));
     }
 
