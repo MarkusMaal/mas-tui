@@ -113,7 +113,13 @@ public class FilePicker
     
     private void Controller()
     {
-        var k = Console.ReadKey().Key;
+        var keyInfo = Console.ReadKey(true);
+        if (((keyInfo.Modifiers & ConsoleModifiers.Control) != 0))
+        {
+            OnFileCancel();
+            return;
+        }
+        var k = keyInfo.Key;
         switch (k)
         {
             case ConsoleKey.UpArrow:
@@ -166,9 +172,6 @@ public class FilePicker
             case ConsoleKey.PageDown:
                 Skip += _maxHeight;
                 SelectedIndex = Skip;
-                break;
-            default:
-                Console.Write("\r   \r");
                 break;
         }
     }

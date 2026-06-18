@@ -50,15 +50,15 @@ public class Configuration : TabBase
 
   public Configuration()
   {
-    Program.L.StatusText = "Generating previews";
+    Program.L.StatusText = "Eelvaadete genereerimine";
     ReloadPreviews();
-    Program.L.StatusText = "Loading integration configuration";
+    Program.L.StatusText = "Integratsiooni konfiguratsiooni laadimine";
     _config = new CommonConfig();
     _config.Load(_masRoot);
     _logoCheck.Value = _config.ShowLogo;
     _desktopCheck.Value = _config.AutostartNotes;
     _scheduleCheck.Value = _config.AllowScheduledTasks;
-    Program.L.StatusText = "Loading color scheme";
+    Program.L.StatusText = "Värviskeemi laadimine";
     ColorScheme.LoadScheme(_masRoot);
     Program.Background = ColorScheme.BackgroundColor;
     Program.Foreground = ColorScheme.ForegroundColor;

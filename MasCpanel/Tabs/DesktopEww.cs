@@ -11,7 +11,7 @@ public class DesktopEww : TabBase
 
     public DesktopEww()
     {
-        Program.L.StatusText = "Loading eww configuration";
+        Program.L.StatusText = "Eww konfiguratsiooni laadimine";
         _ewwCfg = new EwwYuck();
         _ewwCfg.LoadConfig();
         ConfigureMenu();

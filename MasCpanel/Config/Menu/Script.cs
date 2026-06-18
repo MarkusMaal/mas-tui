@@ -20,7 +20,7 @@ public class Script
         if (Commands == null) return;
         if (Wait)
         {
-            Program.L.StatusText = "Running script";
+            Program.L.StatusText = "Skripti jooksutamine";
             new Thread(Program.SpinLoader).Start();
         }
         foreach (var cmd in Commands)

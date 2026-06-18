@@ -16,8 +16,7 @@ public class MainScreen
     
     private readonly Edition _edition = new();
     
-    private System.Drawing.Color? _backgroundColor;
-    private System.Drawing.Color? _foregroundColor;
+    private TabControl? _tab;
     public void Show()
     {
         using var colorBlockRenderer = new BrailleRenderer(new RenderOptions
@@ -26,23 +25,23 @@ public class MainScreen
             MaxWidth = Console.WindowWidth,
         });
         _background = colorBlockRenderer.RenderFile(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas", "bg_common.png"));
-        Program.L.StatusText = "Initializing TUI";
-        var t = new TabControl
+        Program.L.StatusText = "TUI ettevalmistamine";
+        _tab = new TabControl
         {
             ActiveColor = new Color { BackgroundColor = 0xB, ForegroundColor = 0x0 },
             DefaultColor = new Color { BackgroundColor = 0x8, ForegroundColor = 0x0 }
         };
         if (!_edition.EditionName.StartsWith("basic", StringComparison.OrdinalIgnoreCase))
         {
-            t.AddTab(new TabItem { Title = "Skriptid" });
-            t.AddTab(new TabItem { Title = "MarkuStation" });
+            _tab.AddTab(new TabItem { Title = "Skriptid" });
+            _tab.AddTab(new TabItem { Title = "MarkuStation" });
         }
-        t.AddTab(new TabItem { Title = "Konfiguratsioon" });
+        _tab.AddTab(new TabItem { Title = "Konfiguratsioon" });
         if (_edition.Features!.Contains("TS"))
         {
-            t.AddTab(new TabItem { Title = "Töölaud" });
+            _tab.AddTab(new TabItem { Title = "Töölaud" });
         }
-        t.AddTab(new TabItem { Title = "Teave" });
+        _tab.AddTab(new TabItem { Title = "Teave" });
         TabBase[] tabs;
 
         var config = new Configuration();
@@ -65,23 +64,28 @@ public class MainScreen
             tabs = [config, new About(VerifileStatus, _edition)];
         }
 
-        _backgroundColor = config.ColorScheme.BackgroundColor;
-        _foregroundColor = config.ColorScheme.ForegroundColor;
-
         foreach (var (i, tab) in tabs.Index())
         {
-            if (i > t.TabItems.Count - 1) break;
-            t.TabItems[i].Draw += tab.Draw;
-            t.TabItems[i].KeyDown += tab.ReceiveKey;
+            if (i > _tab.TabItems.Count - 1) break;
+            _tab.TabItems[i].Draw += tab.Draw;
+            _tab.TabItems[i].KeyDown += tab.ReceiveKey;
         }
 
         Program.L.StatusText = "";
         Cls();
         while (true)
         {
-            t.Draw();
+            _tab.Draw();
             var consoleBreak = false;
-            var key = Console.ReadKey().Key; 
+            Console.TreatControlCAsInput = true;
+            var keyInfo = Console.ReadKey(true);
+            Console.TreatControlCAsInput = false;
+            
+            if (((keyInfo.Modifiers & ConsoleModifiers.Control) != 0) && (keyInfo.KeyChar == 'C'))
+            {
+                break;
+            }
+            var key = keyInfo.Key; 
             switch (key)
             {
                 case ConsoleKey.Escape:
@@ -91,31 +95,36 @@ public class MainScreen
                     break;
                 case ConsoleKey.RightArrow:
                     Cls();
-                    if (t.SelectedIndex < t.TabItems.Count - 1)
+                    if (_tab.SelectedIndex < _tab.TabItems.Count - 1)
                     {
-                        t.SelectedIndex++;
+                        _tab.SelectedIndex++;
                     }
                     else
                     {
-                        t.SelectedIndex = 0;
+                        _tab.SelectedIndex = 0;
                     }
                     break;
                 case ConsoleKey.LeftArrow:
                     Cls();
-                    if (t.SelectedIndex > 0)
+                    if (_tab.SelectedIndex > 0)
                     {
-                        t.SelectedIndex--;
+                        _tab.SelectedIndex--;
                     }
                     else
                     {
-                        t.SelectedIndex = t.TabItems.Count - 1;
+                        _tab.SelectedIndex = _tab.TabItems.Count - 1;
+                    }
+                    break;
+                case ConsoleKey.C:
+                    if ((keyInfo.Modifiers & ConsoleModifiers.Control) != 0)
+                    {
+                        consoleBreak = true;
                     }
                     break;
                 default:
-                    t.TabItems[t.SelectedIndex].InvokeKeyDown(this, key);
+                    _tab.TabItems[_tab.SelectedIndex].InvokeKeyDown(this, key);
                     break;
             }
-
             if (consoleBreak || _reload) break;
         }
     }
@@ -160,7 +169,7 @@ public class MainScreen
         ColorConsole.Write(
             $"~--{ansiBg}{ansiFg}" + ($"Markuse {device} juhtpaneel " + verStr).PadBoth(Console.WindowWidth - 2) + " ");
 
-        Console.CursorLeft -= exitHint.Length + 1;
+        if (Console.CursorLeft > exitHint.Length) Console.CursorLeft -= exitHint.Length + 1;
         ColorConsole.Write($"~--{ansiBg}\e[91m{exitHint}~--");
         Console.SetCursorPosition(0, 0);
     }

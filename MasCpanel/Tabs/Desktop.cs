@@ -8,7 +8,7 @@ namespace MasCpanel.Tabs;
 public class Desktop : TabBase
 {
     private DesktopLayout? _desktopLayout;
-    private Menu _menu;
+    private Menu? _menu;
     private readonly JsonSerializerOptions _serializerOptions;
 
     public Desktop()
@@ -18,7 +18,7 @@ public class Desktop : TabBase
             WriteIndented = true,
             TypeInfoResolver = DesktopLayoutSourceGenerationContext.Default
         };
-        Program.L.StatusText = "Loading desktop configuration";
+        Program.L.StatusText = "Töölaua konfiguratsiooni laadimine";
         var mas_root = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas");
         _desktopLayout = JsonSerializer.Deserialize<DesktopLayout>(File.ReadAllText(mas_root + "/DesktopIcons.json"), _serializerOptions);
         if (_desktopLayout == null) return;

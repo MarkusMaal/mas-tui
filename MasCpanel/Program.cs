@@ -1,4 +1,5 @@
-﻿using MasCommon;
+﻿using System.Diagnostics;
+using MasCommon;
 using MasTUICommon;
 using Color = System.Drawing.Color;
 
@@ -19,20 +20,27 @@ namespace MasCpanel
     
     private static int Main()
     {
+      Console.CancelKeyPress += (_, e) =>
+      {
+        if (e.SpecialKey != ConsoleSpecialKey.ControlC) return;
+        if (e.SpecialKey == ConsoleSpecialKey.ControlBreak) Process.GetCurrentProcess().Kill();
+        Console.Clear();
+        Console.Error.WriteLine("Rakenduse ohutu peatamine nurjus");
+      };
       L.StatusTextChanged += LoadCheck;
       new Thread(SpinLoader).Start();
       var status = "";
-      
+    
       var task = new Task(() =>
       {
-        L.StatusText = "Checking for Verifile tamper";
+        L.StatusText = "Verifile võltsingu kontroll";
         var vf = new Verifile();
         if (!Verifile.CheckVerifileTamper())
         {
           status = "FAILED";
           return;
         }
-        L.StatusText = "Checking for Verifile status";
+        L.StatusText = "Verifile oleku kontroll";
         status = vf.MakeAttestation();
       });
 
@@ -40,14 +48,16 @@ namespace MasCpanel
       task.Wait();
       if (status != "VERIFIED")
       {
-        Console.WriteLine("The computer did not pass Verifile attestation. Closing the program now...");
-        return 1;
+        Console.WriteLine("Verifile kontroll ebaõnnestus. Programmi sulgemine...");
+        Environment.Exit(1);
       }
       MsConfig.LoadConfig();
-      new MainScreen
+      var mainScreen = new MainScreen
       {
         VerifileStatus = status,
-      }.Show();
+      };
+      mainScreen.Show();
+      Console.Clear();
       return 0;
     }
 
