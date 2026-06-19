@@ -12,7 +12,7 @@ public class About(string? status, Edition edition) : TabBase
         {
             "Pro" => new Color { BackgroundColor = 0xB },
             "Basic" or "Basic+" => new Color { BackgroundColor = 0xE },
-            "Premium" => new Color { BackgroundColor = 0x1 },
+            "Premium" => new Color { BackgroundColor = 0xC },
             "Starter" => new Color { BackgroundColor = 0xA },
             "Ultimate" => new Color { BackgroundColor = 0xD },
             _ => new Color { BackgroundColor = 0x8 }

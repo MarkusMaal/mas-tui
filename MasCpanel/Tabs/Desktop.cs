@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text;
 using System.Text.Json;
 using MasCommon;
 using MasTUICommon;
@@ -52,12 +53,17 @@ public class Desktop : TabBase
             Program.L.StatusText = "Tuvastatud ikoon: " + line;
         }
         if (_desktopLayout == null) return;
+        ReloadMenu();
+    }
+
+    private void ReloadMenu()
+    {
         _menu = new Menu
         {
             ActiveColor = new Color { BackgroundColor = 7, ForegroundColor = 0 },
             DefaultColor = new Color { BackgroundColor = 16, ForegroundColor = 7 },
             MarginLeft = 1, MarginTop = 3, SelectedIndex = 0,
-            TextPadding = _desktopLayout.Children.Max(ce => ce.Icon.Length + 6),
+            TextPadding = _desktopLayout!.Children.Max(ce => ce.Icon.Length + 6),
         };
         
         foreach (var entry in _desktopLayout.Children)
@@ -98,7 +104,130 @@ public class Desktop : TabBase
                 _desktopLayout?.LockIcons = !_desktopLayout.LockIcons;
                 Program.SendDesktopIconCommand("Lock", _desktopLayout?.LockIcons ?? false ? "true" : "false");
                 break;
+            case ConsoleKey.T:
+                CloseIcons();
+                ShowIcons();
+                break;
+            case ConsoleKey.R:
+                var newDims = RenderTextbox("Uued ruudustiku mõõtmed")?.Split('x');
+                if (newDims == null || _desktopLayout == null) break;
+                try
+                {
+                    var x = newDims[0];
+                    var y = newDims[1];
+                    _desktopLayout.IconCountX = int.Parse(x);
+                    _desktopLayout.IconCountY = int.Parse(y);
+                    SaveDesktopSettings();
+                    ReloadIcons();
+                } catch (IndexOutOfRangeException) {}
+                break;
+            case ConsoleKey.V:
+                var newPadding = RenderTextbox("Uus veeris");
+                if (newPadding == null || _desktopLayout == null) break;
+                try
+                {
+                    _desktopLayout.IconPadding = int.Parse(newPadding);
+                    SaveDesktopSettings();
+                    ReloadIcons();
+                } catch (IndexOutOfRangeException) {}
+                break;
+            case ConsoleKey.S:
+                var newSize = RenderTextbox("Uus suurus");
+                if (newSize == null || _desktopLayout == null) break;
+                try
+                {
+                    _desktopLayout.IconSize = int.Parse(newSize);
+                    SaveDesktopSettings();
+                    ReloadIcons();
+                } catch (IndexOutOfRangeException) {}
+                break;
+            case ConsoleKey.Enter:
+                var newLocation = RenderTextbox("Uus asukoht");
+                if (newLocation == null || _desktopLayout == null || _menu == null) break;
+                _desktopLayout.Children[_menu.SelectedIndex].Executable = newLocation;
+                Console.WriteLine("Saadavalolevad ikoonid: " + string.Join(", ", _desktopIcons));
+                var newIcon = RenderTextbox("Uus ikoon: ");
+                Console.CursorTop -= 1;
+                Console.Write("".PadRight(Console.WindowWidth));
+                if (newIcon == null) break;
+                _desktopLayout.Children[_menu.SelectedIndex].Icon = newIcon;
+                SaveDesktopSettings();
+                ReloadIcons();
+                ReloadMenu();
+                break;
+            case ConsoleKey.O:
+                var p = new Process
+                {
+                    StartInfo =
+                    {
+                        UseShellExecute = true,
+                        FileName = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas", "DesktopIcons.json"),
+                    }
+                };
+                p.Start();
+                break;
         }
+    }
+
+    private static void CloseIcons()
+    {
+        foreach (var p in Process.GetProcessesByName("DesktopIcons" +
+                                                     (OperatingSystem.IsWindows() ? ".exe" : "")))
+        {
+            p.Kill();
+        }
+    }
+
+    private void SaveDesktopSettings()
+    {
+        var masRoot = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas");
+        var jsonData = JsonSerializer.Serialize(_desktopLayout, _serializerOptions);
+        File.WriteAllText(masRoot + "/DesktopIcons.json", jsonData, encoding: Encoding.UTF8);
+    }
+    
+    private static void ReloadIcons()
+    {
+        Program.SendDesktopIconCommand("Restart", "true");
+    }
+
+    private static void ShowIcons()
+    {
+
+        var masRoot = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas");
+        var p2 = new Process
+        {
+            StartInfo = {
+                UseShellExecute = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                FileName = masRoot + "/Markuse asjad/DesktopIcons" + (OperatingSystem.IsWindows() ? ".exe" : ""),
+                RedirectStandardOutput = false,
+                RedirectStandardError = false,
+                RedirectStandardInput = false,
+                    
+            }
+        };
+        // some additional nonsense is required if we're not in Windows 
+        if (!OperatingSystem.IsWindows())
+        {
+            p2.StartInfo.Arguments = "-c \"nohup '" + p2.StartInfo.FileName + "' > /dev/null 2>&1 &\"";
+            p2.StartInfo.FileName = "bash";
+        }
+        p2.Start();
+    }
+
+    private string? RenderTextbox(string label)
+    {
+        var originalLeft = Console.CursorLeft;
+        Console.CursorLeft = Console.WindowWidth - 2;
+        Console.Write("]");
+        Console.CursorLeft = originalLeft;
+        Console.Write(label + ": [");
+        var r = Console.ReadLine();
+        Console.CursorTop--;
+        Console.CursorLeft = 0;
+        Console.Write("".PadRight(Console.WindowWidth));
+        Console.CursorLeft = 0;
+        return r;
     }
 
     public override void Draw(object sender, EventArgs e)
@@ -111,20 +240,20 @@ public class Desktop : TabBase
         _menu?.Draw();
         if (_menu == null) return;
         Console.CursorLeft++;
-        ColorConsole.WriteLine("~-CNB!~-- Markuse arvuti töölaua süsteemi redigeerimine pole selles Markuse arvuti juhtpaneeli versioonis saadaval");
+        ColorConsole.WriteLine("~--JS(~-2O~--)N redigeerimine");
         var offsetX = (_desktopLayout?.Children.Max(c => c.Icon.Length) ?? 0) + 18;
         var offsetY = 3;
         Console.SetCursorPosition(offsetX, offsetY++);
-        Console.Write("Ikoone saadaval: " + _desktopIcons.Count);
         var selectedItem = _desktopLayout!.Children[_menu.SelectedIndex];
-        Console.SetCursorPosition(offsetX, offsetY++);
         Console.Write($"Asukoht: {selectedItem.LocationX}x{selectedItem.LocationY}    ");
         Console.SetCursorPosition(offsetX, offsetY++);
-        Console.Write($"Ruudustik: {_desktopLayout.IconCountX}x{_desktopLayout.IconCountY}");
+        ColorConsole.Write("~--(~-1T~--)aaskäivita töölauaikoonid");
         Console.SetCursorPosition(offsetX, offsetY++);
-        Console.Write($"Veeris: {_desktopLayout.IconPadding}");
+        ColorConsole.Write($"~--(~-DR~--)uudustik: {_desktopLayout.IconCountX}x{_desktopLayout.IconCountY}");
         Console.SetCursorPosition(offsetX, offsetY++);
-        Console.Write($"Ikooni suurus: {_desktopLayout.IconSize}");
+        ColorConsole.Write($"~--(~-FV~--)eeris: {_desktopLayout.IconPadding}");
+        Console.SetCursorPosition(offsetX, offsetY++);
+        ColorConsole.Write($"~--Ikooni (~-9s~--)uurus: {_desktopLayout.IconSize}");
         offsetY++;
         Console.SetCursorPosition(offsetX, offsetY++);
         new Checkbox {Value = _desktopLayout.LockIcons, KeyColor = new Color {ForegroundColor = 0xC}, Label = "Lukusta ikoonid", Key = 'L'}.Draw();
@@ -134,6 +263,6 @@ public class Desktop : TabBase
         new Checkbox {Value = _desktopLayout.ShowIcons, KeyColor = new Color {ForegroundColor = 0xB}, Label = "Kuva ikoonid", Key = 'i'}.Draw();
         Console.CursorLeft += 6;
         new Checkbox {Value = _desktopLayout.ShowLogo, KeyColor = new Color {ForegroundColor = 0xE}, Label = "Kuva logo", Key = 'g'}.Draw();
-        Console.SetCursorPosition(offsetX, offsetY);
+        Console.SetCursorPosition(0, offsetY + 4);
     }
 }
