@@ -1,3 +1,5 @@
+using MasCommon;
+
 namespace MasCpanel.Config.MarkuStation;
 
 public class Config
@@ -56,7 +58,7 @@ public class Config
     public void LoadConfig()
     {
         var sFile = Path.Join(_masRoot, "setting.txt");
-        if (!File.Exists(sFile)) return;
+        if (!Program.CheckFiles(Verifile.FileScope.MarkuStation)) return;
         // general settings
         TextReader tr = File.OpenText(sFile);
         CreepypastaIntro = tr.ReadLine() == "true";

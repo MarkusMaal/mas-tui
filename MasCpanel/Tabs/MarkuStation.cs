@@ -1,3 +1,4 @@
+using MasCommon;
 using MasCpanel.Config.MarkuStation;
 using MasTUICommon;
 using MasTUICommon.Components;
@@ -8,6 +9,9 @@ public class MarkuStation : TabBase
 {
     private int SelectedGame { get; set; }
     private int Skip { get; set; }
+
+    public override bool VerifileOk { get; init; } = Program.CheckFiles(Verifile.FileScope.MarkuStation);
+
     public override void ReceiveKey(object sender, ConsoleKey key)
     {
         Console.Write("\r   ");
@@ -114,6 +118,11 @@ public class MarkuStation : TabBase
     
     public override void Draw(object sender, EventArgs e)
     {
+        if (!VerifileOk)
+        {
+            Console.WriteLine("Puuduvad vajalikud failid MarkuStationi seadistamiseks!");
+            return;
+        }
         Console.SetCursorPosition(0, 3);
         const string label = "Mängud";
         const int minWidth = 62;

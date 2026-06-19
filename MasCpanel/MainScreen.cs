@@ -31,17 +31,6 @@ public class MainScreen
             ActiveColor = new Color { BackgroundColor = 0xB, ForegroundColor = 0x0 },
             DefaultColor = new Color { BackgroundColor = 0x8, ForegroundColor = 0x0 }
         };
-        if (!_edition.EditionName.StartsWith("basic", StringComparison.OrdinalIgnoreCase))
-        {
-            _tab.AddTab(new TabItem { Title = "Skriptid" });
-            _tab.AddTab(new TabItem { Title = "MarkuStation" });
-        }
-        _tab.AddTab(new TabItem { Title = "Konfiguratsioon" });
-        if (_edition.Features!.Contains("TS"))
-        {
-            _tab.AddTab(new TabItem { Title = "Töölaud" });
-        }
-        _tab.AddTab(new TabItem { Title = "Teave" });
         TabBase[] tabs;
 
         var config = new Configuration();
@@ -62,6 +51,21 @@ public class MainScreen
         } else
         {
             tabs = [config, new About(VerifileStatus, _edition)];
+        }
+
+        tabs = tabs.Where(t => t.VerifileOk).ToArray();
+        foreach (var tab in tabs)
+        {
+            var label = tab switch
+            {
+                About => "Teave",
+                Configuration => "Konfiguratsioon",
+                Desktop or DesktopEww => "Töölaud",
+                Home => "Skriptid",
+                MarkuStation => "MarkuStation",
+                _ => "???"
+            };
+            _tab.AddTab(new TabItem {Title = label});
         }
 
         foreach (var (i, tab) in tabs.Index())

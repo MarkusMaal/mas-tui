@@ -14,8 +14,10 @@ public class Configuration : TabBase
   private string? _desktopPreview;
   private string? _uncommonPreview;
   private string? _loginPreview;
-  private readonly CommonConfig _config;
+  private readonly CommonConfig? _config;
   private readonly string _masRoot = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas");
+
+  public sealed override bool VerifileOk { get; init; } = Program.CheckFiles(Verifile.FileScope.ControlPanel);
   private readonly Checkbox _logoCheck = new()
   {
     Key = 'K',
@@ -50,6 +52,7 @@ public class Configuration : TabBase
 
   public Configuration()
   {
+    if (!VerifileOk) return;
     Program.L.StatusText = "Eelvaadete genereerimine";
     ReloadPreviews();
     Program.L.StatusText = "Integratsiooni konfiguratsiooni laadimine";
@@ -251,6 +254,7 @@ public class Configuration : TabBase
     Console.CursorLeft -= 6;
     ColorScheme.BackgroundColor = ColorTranslator.FromHtml("#" + Console.ReadLine()?.ToUpper());
     ColorScheme.SaveScheme(_masRoot);
+    Program.SendDesktopIconCommand("ReloadTheme");
     Program.Background = ColorScheme.BackgroundColor;
   }
 
@@ -261,11 +265,17 @@ public class Configuration : TabBase
     Console.CursorLeft -= 6;
     ColorScheme.ForegroundColor = ColorTranslator.FromHtml("#" + Console.ReadLine()?.ToUpper());
     ColorScheme.SaveScheme(_masRoot);
+    Program.SendDesktopIconCommand("ReloadTheme");
     Program.Foreground = ColorScheme.ForegroundColor;
   }
 
   public override void Draw(object sender, EventArgs e)
   {
+    if (!VerifileOk)
+    {
+      Console.WriteLine("Puuduvad vajalikud failid konfiguratsiooni vahekaardi kasutamiseks!");
+      return;
+    }
     if (_desktopPreview == null || _loginPreview == null || _uncommonPreview == null) return;
     Console.Write("Taustad:");
     Console.CursorLeft += 2;

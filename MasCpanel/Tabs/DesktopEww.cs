@@ -32,7 +32,9 @@ public class DesktopEww : TabBase
             _menu.AddItem(entry.Tooltip, (_, _) => {}, $"Asukoht: {entry.Executable.PadRight(_ewwCfg.Entries.Max(ce => ce.Executable.Length) + 10)}\n Ikoon: {entry.Image}");
         }
     }
-    
+
+    public override bool VerifileOk { get; init; } = true;
+
     public override void ReceiveKey(object sender, ConsoleKey key)
     {
         switch (key)

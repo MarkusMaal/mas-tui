@@ -84,6 +84,21 @@ namespace MasCpanel
         Console.Write("".PadRight(Console.WindowWidth - 1) + "\r");
       }
     }
+
+    public static bool CheckFiles(Verifile.FileScope scope)
+    {
+      return Verifile.CheckFiles(scope);
+    }
+
+    public static void SendDesktopIconCommand(string type, string args = "")
+    {
+      DesktopCommand cmd = new()
+      {
+        Arguments = args,
+        Type = type
+      };
+      cmd.Send(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas"));
+    }
   }
 };
 

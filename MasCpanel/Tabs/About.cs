@@ -69,6 +69,8 @@ public class About(string? status, Edition edition) : TabBase
         Console.WriteLine($"\n {retChar}  Laadi andmed uuesti (salvestamata muudatused lähevad kaotsi)");
     }
 
+    public override bool VerifileOk { get; init; } = File.Exists(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas", "edition.txt"));
+
     public override void ReceiveKey(object sender, ConsoleKey key)
     {
         if (!(sender is MainScreen mainScreen) || key != ConsoleKey.Enter)

@@ -39,7 +39,9 @@ public class Home : TabBase
         if (scriptMenu == null) return;
         _homeMenu.TextPadding = scriptMenu.GetMenuItems().Max(sm => sm.Title.Length) + 6;
     }
-    
+
+    public override bool VerifileOk { get; init; } = File.Exists(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas", "ScriptMenu.xml"));
+
     public override void ReceiveKey(object sender, ConsoleKey key)
     {
         if (sender is not MainScreen mainScreen) return;
