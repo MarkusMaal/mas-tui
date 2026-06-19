@@ -1,11 +1,15 @@
 ![Logo](img/mas_general_sm.svg)
 # Markuse asjade tekstiliidesed
 
-Tekstiliidesed Markuse asjade jaoks. Projekti eesmärk on asendada "Markuse arvuti tööriistad" bash skript ja pakkuda samasugust liidest igale toetatud Markuse asjade operatsioonsüsteemile (Windows/macOS/Linux).
+Tekstiliidesed Markuse asjade jaoks.
 
-Projekt on Alpha arendusjärgus.
+## Markuse arvuti juhtpaneel (MasCpanel)
 
-## Kompileerimine
+Projekti eesmärk on asendada "Markuse arvuti tööriistad" bash skript ja pakkuda samasugust liidest igale toetatud Markuse asjade operatsioonsüsteemile (Windows/macOS/Linux).
+
+Projekt on hilises Alpha arendusjärgus.
+
+### Kompileerimine
 
 Projekti ehitamiseks on vajalik .NET 10.0 raamistik, SDK ja PowerShell. Kui olete PowerShellis, saate rakenduse kompileerida järgmiste käsklustega:
 
@@ -14,9 +18,9 @@ Set-ExecutionPolicy Bypass -Scope Process
 .\build.ps1
 ```
 
-## Eelvaade (must-valge)
+### Eelvaade (must-valge)
 
-### Avaleht
+#### Avaleht
 
 ```
  <     Avaleht      >      MarkuStation        Konfiguratsioon            Teave         
@@ -30,7 +34,7 @@ Set-ExecutionPolicy Bypass -Scope Process
  Taaskäivitab Markuse asjade integratsiooniprogrammi ja M.A.I.A. serveri 
  ```
 
-### MarkuStation
+#### MarkuStation
 
 ```
        Avaleht         <   MarkuStation   >    Konfiguratsioon            Teave         
@@ -49,7 +53,7 @@ Set-ExecutionPolicy Bypass -Scope Process
  [ ] (S)pecial intro
 ```
 
-### Konfiguratsioon
+#### Konfiguratsioon
 
 ```
        Avaleht             MarkuStation      < Konfiguratsioon  >         Teave         
@@ -70,7 +74,7 @@ Taustad:  (V)aheta miniversioon töölauataustaga
   < Pollimise sagedus: 5000ms (+/-) >
 ```
 
-### Teave
+#### Teave
 ```
        Avaleht             MarkuStation        Konfiguratsioon     <      Teave       > 
 
@@ -87,3 +91,16 @@ Räsi: 2da1e9ea32                                   ✓ Grupipoliitika
 
  ↵  Laadi andmed uuesti (salvestamata muudatused lähevad kaotsi)
 ```
+
+
+## Markuse mälupulk (MasFlashDrv)
+
+Sisuliselt tekstiliidesel põhinev alternatiiv mälupulga juhtpaneelile.
+
+Projekt on Alpha arendusjärgus.
+
+Implementeeritud funktsionaalsus:
+
+* Uudiste lugemine (postitused Markuse asjad ajaveebist)
+* Uusimate videote vaatamine
+* Mälupulga teabe vaatamine
