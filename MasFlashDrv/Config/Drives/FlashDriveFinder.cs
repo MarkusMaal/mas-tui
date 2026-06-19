@@ -16,6 +16,11 @@
                         Drives.Add(new Edition(di.RootDirectory.FullName));
                     }
                 }
+
+                if (Drives.Count == 0)
+                {
+                    Thread.Sleep(5000);
+                }
             }
         }
     }
