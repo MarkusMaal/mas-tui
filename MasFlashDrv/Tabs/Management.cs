@@ -1,4 +1,5 @@
 ﻿using MasFlashDrv.Config.Drives;
+using MasFlashDrv.Config.Stats;
 using MasTUICommon.Components;
 
 namespace MasFlashDrv.Tabs
@@ -26,7 +27,7 @@ namespace MasFlashDrv.Tabs
             Console.SetCursorPosition(3 + s.Length, t++);
             Console.Write("Väljaanne: " + CurrentDrive.EditionName);
             Console.SetCursorPosition(3 + s.Length, t++);
-            Console.Write("Maht: " + Math.Round(CurrentDrive.FsInfo.TotalSize / 1000.0 / 1000.0 / 1000.0, 1) + "GB (" + Math.Round(CurrentDrive.FsInfo.TotalSize / 1024.0 / 1024.0 / 1024.0, 1) + " GiB)");
+            Console.Write("Maht: " + SCounter.FriendlySize(CurrentDrive.FsInfo.TotalSize, false, 1) + " (" + SCounter.FriendlySize(CurrentDrive.FsInfo.TotalSize, true, 1) + ")");
             Console.SetCursorPosition(3 + s.Length, t++);
             Console.Write("Failisüsteem: " + CurrentDrive.FsInfo.DriveFormat);
             Console.SetCursorPosition(3 + s.Length, t++);

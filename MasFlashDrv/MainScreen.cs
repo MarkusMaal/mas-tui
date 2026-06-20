@@ -21,8 +21,10 @@ namespace MasFlashDrv
             var tabs = new List<TabBase>
             {
                 new News(drive),
+                new Folders(drive),
                 new QuickApps(drive),
                 new Management(drive),
+                new Stats(drive)
             };
             foreach (var tab in tabs)
             {
@@ -30,7 +32,9 @@ namespace MasFlashDrv
                 {
                     News => "Uudised",
                     QuickApps => "Kiirrakendused",
+                    Folders => "Kaustad",
                     Management => "Haldamine",
+                    Stats => "Statistika",
                     _ => "???"
                 };
                 _tab.AddTab(new TabItem { Title = label });
@@ -41,8 +45,6 @@ namespace MasFlashDrv
                     Console.Title = "Markuse mälupulk (" + drive.Mount + ") - " + label;
                 };
             }
-            _tab.AddTab(new TabItem { Title = "Kaustad" });
-            _tab.AddTab(new TabItem { Title = "Statistika" });
             Console.Title = "Markuse mälupulk (" + drive.Mount + ") - " + _tab.TabItems[0].Title;
             //_tab.AddTab(new TabItem { Title = "Arendamine" });
         }
