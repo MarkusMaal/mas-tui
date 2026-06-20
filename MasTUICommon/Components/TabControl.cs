@@ -20,6 +20,8 @@ namespace MasTUICommon.Components
             set
             {
                 if (value > TabItems.Count - 1 || value < 0) throw new IndexOutOfRangeException();
+                TabItems[SelectedIndex].InvokeLeave(this);
+                TabItems[value].InvokeEnter(this);
                 field = value;
             }
         } = 0;

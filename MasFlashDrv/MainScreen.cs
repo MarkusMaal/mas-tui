@@ -21,6 +21,7 @@ namespace MasFlashDrv
             var tabs = new List<TabBase>
             {
                 new News(drive),
+                new QuickApps(drive),
                 new Management(drive),
             };
             foreach (var tab in tabs)
@@ -28,16 +29,21 @@ namespace MasFlashDrv
                 var label = tab switch
                 {
                     News => "Uudised",
+                    QuickApps => "Kiirrakendused",
                     Management => "Haldamine",
                     _ => "???"
                 };
                 _tab.AddTab(new TabItem { Title = label });
                 _tab.TabItems[_tab.TabItems.Count - 1].Draw += tab.Draw;
                 _tab.TabItems[_tab.TabItems.Count - 1].KeyDown += tab.ReceiveKey;
+                _tab.TabItems[_tab.TabItems.Count - 1].TabEnter += (_, _) =>
+                {
+                    Console.Title = "Markuse mälupulk (" + drive.Mount + ") - " + label;
+                };
             }
             _tab.AddTab(new TabItem { Title = "Kaustad" });
-            _tab.AddTab(new TabItem { Title = "Kiirrakendused" });
             _tab.AddTab(new TabItem { Title = "Statistika" });
+            Console.Title = "Markuse mälupulk (" + drive.Mount + ") - " + _tab.TabItems[0].Title;
             //_tab.AddTab(new TabItem { Title = "Arendamine" });
         }
 

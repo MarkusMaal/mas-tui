@@ -72,11 +72,10 @@ public class Menu
         var tip = Items[SelectedIndex].Tooltip;
         if (tip == null) return;
         Console.WriteLine();
-        Console.WriteLine(" " + tip.PadRight(Items.Values.Max(v =>
+        foreach (var sTip in Utils.WrapLines(tip, Console.WindowWidth - 1).Replace("\r\n", "\n").Split('\n'))
         {
-            var tooltip2 = v.Tooltip;
-            return tooltip2?.Length ?? 0;
-        })));
+            Console.WriteLine((" " + sTip).PadRight(Console.WindowWidth - 1));
+        }
     }
 
     public void Execute()

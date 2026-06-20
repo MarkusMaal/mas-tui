@@ -1,7 +1,6 @@
-﻿using MasFlashDrv.Config.Drives;
+﻿using MasTUICommon;
 using MasTUICommon.Components;
 using System.Diagnostics;
-using System.Text;
 
 namespace MasFlashDrv.Tabs
 {
@@ -26,11 +25,11 @@ namespace MasFlashDrv.Tabs
 
         private string[] Videos { get; set; }
 
-        private Edition CurrentDrive { get; init; }
+        private Config.Drives.Edition CurrentDrive { get; init; }
 
         private bool SkipArticleDraw { get; set; } = false;
 
-        public News(Edition currentDrive)
+        public News(Config.Drives.Edition currentDrive)
         {
             Program.L.StatusText = "Uusimate videote avastamine";
             CurrentDrive = currentDrive;
@@ -82,7 +81,7 @@ namespace MasFlashDrv.Tabs
             ColorConsole.WriteLine("~-F" + title + "~--");
             ColorConsole.WriteLine("~--" + selectedArticleStr.Split('\n')[1]);
             Console.CursorTop++;
-            var fixedArticle = WrapLines(string.Join('\n', selectedArticleStr.Split('\n').Skip(2).ToArray()), maxWidth);
+            var fixedArticle = Utils.WrapLines(string.Join('\n', selectedArticleStr.Split('\n').Skip(2).ToArray()), maxWidth);
             foreach (var c in fixedArticle.Split('\n').Skip(1 + Skip))
             {
                 if (Console.CursorLeft > maxWidth)
@@ -96,30 +95,6 @@ namespace MasFlashDrv.Tabs
                     Console.WriteLine(c);
                 }
             }
-        }
-
-        private string WrapLines(string content, int constraint)
-        {
-            StringBuilder sb = new();
-            foreach (var l in content.Split('\n'))
-            {
-                var debt = 0;
-                var words = new List<string>();
-                foreach (var w in l.Split(' '))
-                {
-                    if (debt + w.Length > constraint)
-                    {
-                        debt = 0;
-                        sb.AppendLine(string.Join(' ', words));
-                        words.Clear();
-                    }
-                    words.Add(w);
-                    debt += w.Length + 1;
-                }
-                sb.AppendLine(string.Join(' ', words));
-                debt = 0;
-            }
-            return sb.ToString();
         }
 
         private void ClearArticle()
