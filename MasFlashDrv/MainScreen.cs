@@ -23,16 +23,22 @@ namespace MasFlashDrv
                 new News(drive),
                 new Management(drive),
             };
-            _tab.AddTab(new TabItem { Title = "Uudised" });
+            foreach (var tab in tabs)
+            {
+                var label = tab switch
+                {
+                    News => "Uudised",
+                    Management => "Haldamine",
+                    _ => "???"
+                };
+                _tab.AddTab(new TabItem { Title = label });
+                _tab.TabItems[_tab.TabItems.Count - 1].Draw += tab.Draw;
+                _tab.TabItems[_tab.TabItems.Count - 1].KeyDown += tab.ReceiveKey;
+            }
             _tab.AddTab(new TabItem { Title = "Kaustad" });
             _tab.AddTab(new TabItem { Title = "Kiirrakendused" });
-            _tab.AddTab(new TabItem { Title = "Haldamine" });
             _tab.AddTab(new TabItem { Title = "Statistika" });
             //_tab.AddTab(new TabItem { Title = "Arendamine" });
-            _tab.TabItems[0].Draw += tabs[0].Draw;
-            _tab.TabItems[0].KeyDown += tabs[0].ReceiveKey;
-            _tab.TabItems[3].Draw += tabs[1].Draw;
-            _tab.TabItems[3].KeyDown += tabs[1].ReceiveKey;
         }
 
         private void DrawTitleBar()
