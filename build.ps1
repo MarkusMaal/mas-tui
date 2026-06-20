@@ -1,3 +1,21 @@
+$b = [char]::ConvertFromUtf32(0x25cf)
+Clear-Host
+Write-Output ""
+Write-Host -ForegroundColor Red "	 $b "
+Write-Host -ForegroundColor Yellow -NoNewLine "	$b "
+Write-Host -ForegroundColor Green -NoNewLine "$b   "
+Write-Host "markuse arvuti asjad"
+Write-Host -ForegroundColor Blue "	 $b "
+Write-Output ""
+
 dotnet publish MasCpanel -c Release -o out -p:PublishReadyToRun=true -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugSymbols=false
+dotnet publish MasFlashDrv -c Release -o out -p:PublishReadyToRun=true -p:PublishSingleFile=true -p:PublishTrimmed=true --self-contained true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugSymbols=false
 $mas_root = [environment]::getfolderpath(“userprofile”) + "/.mas"
-Copy-Item -Path out/MasCpanel -Destination "$mas_root/Markuse asjad"
+$platform = [System.Environment]::OSVersion.Platform
+$suff = ""
+if ($platform -eq "Win32NT")
+{
+	$suff = ".exe"
+}
+Copy-Item -Path out/MasCpanel$suff -Destination "$mas_root/Markuse asjad" -Verbose
+Copy-Item -Path out/MasFlashDrv$suff -Destination "$mas_root/Markuse asjad" -Verbose

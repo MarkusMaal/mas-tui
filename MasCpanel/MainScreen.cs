@@ -73,9 +73,11 @@ public class MainScreen
             if (i > _tab.TabItems.Count - 1) break;
             _tab.TabItems[i].Draw += tab.Draw;
             _tab.TabItems[i].KeyDown += tab.ReceiveKey;
+            _tab.TabItems[i].TabEnter += (_, _) => { Console.Title = GetTitle() + " - " + _tab.TabItems[i].Title; };
         }
 
         Program.L.StatusText = "";
+        Console.Title = GetTitle() + " - " + _tab.TabItems[_tab.SelectedIndex].Title;
         Cls();
         while (true)
         {
@@ -131,6 +133,20 @@ public class MainScreen
             }
             if (consoleBreak || _reload) break;
         }
+    }
+
+    private string GetTitle()
+    {
+        var device = _edition.BuildNo[^1] switch
+        {
+            'a' => "arvuti",
+            'b' => "virtuaalarvuti",
+            'c' => "tahvelarvuti",
+            'd' => "telefoni",
+            'e' => "serveri",
+            _ => "asjade"
+        };
+        return "Markuse " + device + " juhtpaneel";
     }
 
     public void Reload()

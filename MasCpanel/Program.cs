@@ -20,6 +20,7 @@ namespace MasCpanel
     
     private static int Main()
     {
+      Console.Title = "Markuse asjade juhtpaneel";
       Console.CancelKeyPress += (_, e) =>
       {
         if (e.SpecialKey != ConsoleSpecialKey.ControlC) return;

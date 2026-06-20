@@ -47,7 +47,7 @@ namespace MasFlashDrv.Tabs
             }
             for (var i = ratio; i < width; i++)
             {
-                bar += "\u2593";
+                bar += "\u2592";
             }
             while (bar.Length - 1 > width)
             {

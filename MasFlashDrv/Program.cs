@@ -12,6 +12,7 @@ namespace MasFlashDrv
 
         static async Task Main(string[] args)
         {
+            Console.Title = "Markuse mälupulk";
             Console.CancelKeyPress += (_, e) =>
             {
                 if (e.SpecialKey != ConsoleSpecialKey.ControlC) return;

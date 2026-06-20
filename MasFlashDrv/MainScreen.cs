@@ -45,11 +45,12 @@ namespace MasFlashDrv
                     Console.Title = "Markuse mälupulk (" + drive.Mount + ") - " + label;
                 };
             }
+            Program.L.StatusText = "";
             Console.Title = "Markuse mälupulk (" + drive.Mount + ") - " + _tab.TabItems[0].Title;
             //_tab.AddTab(new TabItem { Title = "Arendamine" });
         }
 
-        private void DrawTitleBar()
+        private static void DrawTitleBar()
         {
             var verStr = Assembly.GetExecutingAssembly().GetName().Version?.ToString(4);
             if (verStr == null) throw new NullReferenceException("Version number is undefined!");
