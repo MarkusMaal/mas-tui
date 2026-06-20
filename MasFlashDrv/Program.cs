@@ -8,7 +8,7 @@ namespace MasFlashDrv
     {
         public static readonly Loader L = new();
         public static Config.News.Feed F = new();
-        private static FlashDriveFinder fDf;
+        private static FlashDriveFinder? fDf;
 
         static async Task Main(string[] args)
         {
@@ -30,6 +30,9 @@ namespace MasFlashDrv
             if (fDf.Drives.Count == 1)
             {
                 new MainScreen(fDf.Drives[0]).Show();
+            } else
+            {
+                DrivePicker.Show([.. fDf.Drives]);
             }
             Console.Clear();
         }

@@ -1,5 +1,6 @@
 ﻿using CodeHollow.FeedReader;
 using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace MasFlashDrv.Config.News
 {
@@ -7,10 +8,30 @@ namespace MasFlashDrv.Config.News
     {
         public List<Article> Articles { get; set; } = [];
 
+        public void Read(string xmlFile)
+        {
+            Program.L.StatusText = "Uudiste laadimine";
+            var feed = FeedReader.ReadFromFile(xmlFile);
+            ParseNews(feed);
+        }
+
         public async Task Read()
         {
             Program.L.StatusText = "Uudiste allalaadimine";
-            var feed = await FeedReader.ReadAsync("https://feeds.feedburner.com/markuseasjad_ee");
+            try
+            {
+                var feed = await FeedReader.ReadAsync("https://feeds.feedburner.com/markuseasjad_ee");
+                ParseNews(feed);
+                var feedStr = XDocument.Parse(feed.OriginalDocument).ToString();
+                File.WriteAllText(Path.Join(Path.GetTempPath(), "mas_flashdrv_feed.xml"), feedStr);
+            } catch (HttpRequestException)
+            {
+
+            }
+        }
+
+        private void ParseNews(CodeHollow.FeedReader.Feed feed)
+        {
             foreach (var item in feed.Items)
             {
                 Articles.Add(new Article

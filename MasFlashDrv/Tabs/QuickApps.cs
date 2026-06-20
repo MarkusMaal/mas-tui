@@ -28,7 +28,7 @@ namespace MasFlashDrv.Tabs
                 },
                 MarginLeft = 1,
                 MarginTop = 3,
-                TextPadding = QAppFinder.Apps.Max(p => p.Name.Length) + 6
+                TextPadding = (QAppFinder.Apps.Count > 0 ? QAppFinder.Apps.Max(p => p.Name.Length) : 0) + 6
             };
 
             foreach (var app in QAppFinder.Apps)
@@ -62,6 +62,7 @@ namespace MasFlashDrv.Tabs
                     AppMenu.Execute();
                     break;
                 case ConsoleKey.P:
+                    if (QAppFinder.Apps.Count == 0) break;
                     var tempFile = Path.ChangeExtension(Path.GetTempFileName(), ".bmp");
                     File.WriteAllBytes(tempFile, this.QAppFinder.Apps[AppMenu.SelectedIndex].Screenshot);
                     var p = new Process()

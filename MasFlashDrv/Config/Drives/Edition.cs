@@ -32,10 +32,14 @@ namespace MasFlashDrv.Config.Drives
             LegacyPin = tr.ReadLine() ?? "";
             tr.Close();
             tr.Dispose();
-            tr = File.OpenText(Path.Join(mount, "NTFS", "spin.sys"));
-            Pin = tr.ReadLine() ?? "";
-            tr.Close();
-            tr.Dispose();
+            var spinFile = Path.Join(mount, "NTFS", "spin.sys");
+            if (File.Exists(spinFile))
+            {
+                tr = File.OpenText(spinFile);
+                Pin = tr.ReadLine() ?? "";
+                tr.Close();
+                tr.Dispose();
+            }
         }
 
         public override string ToString()

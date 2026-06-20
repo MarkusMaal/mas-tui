@@ -38,6 +38,17 @@ namespace MasFlashDrv.Tabs
             Videos = tr.ReadToEnd().Split(';');
             tr.Close();
             tr.Dispose();
+            var tempFeedFile = Path.Join(Path.GetTempPath(), "mas_flashdrv_feed.xml");
+            var flashNewsFile = Path.Join(currentDrive.Mount, "E_INFO", "news.xml");
+            if (File.Exists(tempFeedFile))
+            {
+                File.Copy(tempFeedFile, flashNewsFile, true);
+                File.Delete(tempFeedFile);
+            }
+            if (Program.F.Articles.Count == 0 && File.Exists(flashNewsFile))
+            {
+                Program.F.Read(flashNewsFile);
+            }
         }
 
         public override void Draw(object sender, EventArgs e)

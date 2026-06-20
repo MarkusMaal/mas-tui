@@ -18,14 +18,13 @@ namespace MasFlashDrv
                 ActiveColor = new MasTUICommon.Color() { BackgroundColor = 0xA, ForegroundColor = 0 },
                 DefaultColor = new MasTUICommon.Color() { BackgroundColor = 0x8, ForegroundColor = 0 }
             };
-            var tabs = new List<TabBase>
-            {
-                new News(drive),
-                new Folders(drive),
-                new QuickApps(drive),
-                new Management(drive),
-                new Stats(drive)
-            };
+            var tabs = new List<TabBase>();
+            if (Directory.Exists(Path.Join(drive.Mount, "Markuse_videod"))) tabs.Add(new News(drive));
+            if (Directory.Exists(Path.Join(drive.Mount, "markuse asjad", "markuse asjad"))) tabs.Add(new Folders(drive));
+            if (Directory.Exists(Path.Join(drive.Mount, "markuse asjad", "Kiirrakendused"))) tabs.Add(new QuickApps(drive));
+            tabs.Add(new Management(drive));
+            tabs.Add(new Stats(drive));
+            
             foreach (var tab in tabs)
             {
                 var label = tab switch
@@ -50,7 +49,7 @@ namespace MasFlashDrv
             //_tab.AddTab(new TabItem { Title = "Arendamine" });
         }
 
-        private static void DrawTitleBar()
+        public static void DrawTitleBar()
         {
             var verStr = Assembly.GetExecutingAssembly().GetName().Version?.ToString(4);
             if (verStr == null) throw new NullReferenceException("Version number is undefined!");

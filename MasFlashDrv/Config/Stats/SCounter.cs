@@ -8,7 +8,7 @@ namespace MasFlashDrv.Config.Stats
 
         public long TotalUsed { get; init; } = GetSize(new DirectoryInfo(drive.Mount));
 
-        public long MarkusStuff { get; init; } = GetSize(new DirectoryInfo(Path.Join(drive.Mount, "markuse asjad", "markuse asjad")));
+        public long MarkusStuff { get; init; } = GetSize(new DirectoryInfo(Path.Join(drive.Mount, "markuse asjad", "markuse asjad"))) + GetSize(new DirectoryInfo(Path.Join(drive.Mount, "Markuse_videod")));
 
         public long QuickApps { get; init; } = GetSize(new DirectoryInfo(Path.Join(drive.Mount, "markuse asjad", "Kiirrakendused")));
 
@@ -26,8 +26,9 @@ namespace MasFlashDrv.Config.Stats
         private static long GetSize(DirectoryInfo searchDir)
         {
             if (DateTime.Now.Ticks % 500 == 0) Program.L.StatusText = "Statistika kogumine";
+            if (!Directory.Exists(searchDir.FullName)) return 0;
             return searchDir.EnumerateFiles().Sum(p => p.Length) + 
-                searchDir.EnumerateDirectories().Where(d => !d.Attributes.HasFlag(FileAttributes.ReparsePoint)).Sum(GetSize);
+                searchDir.EnumerateDirectories().Where(d => !d.Attributes.HasFlag(FileAttributes.ReparsePoint) && (d.Name != "System Volume Information")).Sum(GetSize);
         }
 
         // for printing the size in a user friendly format

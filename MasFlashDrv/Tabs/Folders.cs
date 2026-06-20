@@ -37,9 +37,19 @@ namespace MasFlashDrv.Tabs
                 {"Ketta juurkaust", ""},
                 {"Mine", Path.Join("markuse asjad", "markuse asjad", "Mine")},
             };
+            var nukeDirs = new List<string>();
             foreach (var (k, v) in StandardDirs)
             {
+                if (!Directory.Exists(Path.Join(currentDrive.Mount, v)))
+                {
+                    nukeDirs.Add(k);
+                    continue;
+                }
                 StandardDirs[k] = Path.Join(currentDrive.Mount, v);
+            }
+            foreach (var d in nukeDirs)
+            {
+                StandardDirs.Remove(d);
             }
             foreach (var u in UkssUsers.UserDirs)
             {

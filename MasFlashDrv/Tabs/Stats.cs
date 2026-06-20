@@ -21,16 +21,31 @@ namespace MasFlashDrv.Tabs
             ColorConsole.WriteLine("~-FKasutatud ruum~-8\t\t" + SCounter.FriendlySize(DriveStats.TotalUsed).PadRight(15) + "~--" + BarGraph((int)perc, maxBar, "-F") + perc + "%~--");
             ColorConsole.WriteLine("~-FVaba ruum~-8\t\t" + SCounter.FriendlySize(DriveStats.FreeSpace).PadRight(15) + "~--");
             Console.WriteLine();
-            perc = Math.Round(DriveStats.MarkusStuff / capacity * 100.0, 1);
-            ColorConsole.WriteLine("~-CMarkuse asjad~-8\t\t" + SCounter.FriendlySize(DriveStats.MarkusStuff).PadRight(15) + "~--" + BarGraph((int)perc, maxBar, "-C") + perc + "%~--");
-            perc = Math.Round(DriveStats.BatchFiles / capacity * 100.0, 1);
-            ColorConsole.WriteLine("~-APakkfailid~-8\t\t" + SCounter.FriendlySize(DriveStats.BatchFiles).PadRight(15) + "~--" + BarGraph((int)perc, maxBar, "-A") + perc + "%~--");
-            perc = Math.Round(DriveStats.QuickApps / capacity * 100.0, 1);
-            ColorConsole.WriteLine("~-BKiirrakendused~-8\t\t" + SCounter.FriendlySize(DriveStats.QuickApps).PadRight(15) + "~--" + BarGraph((int)perc, maxBar, "-B") + perc + "%~--");
-            perc = Math.Round(DriveStats.OperatingSystems / capacity * 100.0, 1);
-            ColorConsole.WriteLine("~-EOperatsioonsüsteemid~-8\t" + SCounter.FriendlySize(DriveStats.OperatingSystems).PadRight(15) + "~--" + BarGraph((int)perc, maxBar, "-E") + perc + "%~--");
-            perc = Math.Round(DriveStats.Other / capacity * 100.0, 1);
-            ColorConsole.WriteLine("~-9Muu~-8\t\t\t" + SCounter.FriendlySize(DriveStats.Other).PadRight(15) + "~--" + BarGraph((int)perc, maxBar, "-9") + perc + "%~--");
+            if (DriveStats.MarkusStuff != 0)
+            {
+                perc = Math.Round(DriveStats.MarkusStuff / capacity * 100.0, 1);
+                ColorConsole.WriteLine("~-CMarkuse asjad~-8\t\t" + SCounter.FriendlySize(DriveStats.MarkusStuff).PadRight(15) + "~--" + BarGraph((int)perc, maxBar, "-C") + perc + "%~--");
+            }
+            if (DriveStats.BatchFiles != 0)
+            {
+                perc = Math.Round(DriveStats.BatchFiles / capacity * 100.0, 1);
+                ColorConsole.WriteLine("~-APakkfailid~-8\t\t" + SCounter.FriendlySize(DriveStats.BatchFiles).PadRight(15) + "~--" + BarGraph((int)perc, maxBar, "-A") + perc + "%~--");
+            }
+            if (DriveStats.QuickApps != 0)
+            {
+                perc = Math.Round(DriveStats.QuickApps / capacity * 100.0, 1);
+                ColorConsole.WriteLine("~-BKiirrakendused~-8\t\t" + SCounter.FriendlySize(DriveStats.QuickApps).PadRight(15) + "~--" + BarGraph((int)perc, maxBar, "-B") + perc + "%~--");
+            }
+            if (DriveStats.OperatingSystems != 0)
+            {
+                perc = Math.Round(DriveStats.OperatingSystems / capacity * 100.0, 1);
+                ColorConsole.WriteLine("~-EOperatsioonsüsteemid~-8\t" + SCounter.FriendlySize(DriveStats.OperatingSystems).PadRight(15) + "~--" + BarGraph((int)perc, maxBar, "-E") + perc + "%~--");
+            }
+            if (DriveStats.Other != 0)
+            {
+                perc = Math.Round(DriveStats.Other / capacity * 100.0, 1);
+                ColorConsole.WriteLine("~-9Muu~-8\t\t\t" + SCounter.FriendlySize(DriveStats.Other).PadRight(15) + "~--" + BarGraph((int)perc, maxBar, "-9") + perc + "%~--");
+            }
         }
 
         private static string BarGraph(int perc, int width, string color)
