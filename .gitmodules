@@ -1,3 +1,4 @@
 [submodule "MasCommon"]
 	path = MasCommon
 	url = git@github.com:MarkusMaal/MasCommon.git
+	branch = main
