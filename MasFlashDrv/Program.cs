@@ -1,4 +1,5 @@
-﻿using MasFlashDrv.Config.Drives;
+﻿using MasFlashDrv.Config;
+using MasFlashDrv.Config.Drives;
 using MasTUICommon;
 using System.Diagnostics;
 
@@ -8,6 +9,7 @@ namespace MasFlashDrv
     {
         public static readonly Loader L = new();
         public static Config.News.Feed F = new();
+        public static Integration? C;
         private static FlashDriveFinder? fDf;
 
         static async Task Main(string[] args)
@@ -25,6 +27,7 @@ namespace MasFlashDrv
             L.StatusText = "Ettevalmistamine";
             await F.Read();
             fDf = new();
+            C = new();
             L.StatusText = "";
             Console.Clear();
             if (fDf.Drives.Count == 1)
