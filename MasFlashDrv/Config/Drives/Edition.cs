@@ -9,7 +9,7 @@ namespace MasFlashDrv.Config.Drives
 
         public string EditionName { get; set; }
 
-        public string Pin { get; set; }
+        public string? Pin { get; set; }
 
         public string LegacyPin { get; set; }
 
@@ -57,7 +57,13 @@ namespace MasFlashDrv.Config.Drives
 
         public bool CheckPin(string providedPin)
         {
-            return CreateMD5(providedPin) == Pin;
+            if (Pin != null)
+            {
+                return CreateMD5(providedPin) == Pin;
+            } else
+            {
+                return providedPin == LegacyPin;
+            }
         }
 
         private static string CreateMD5(string input)

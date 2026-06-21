@@ -21,6 +21,8 @@ namespace MasFlashDrv.Config
                 field = value;
         }} = false;
 
+        public bool ChooseDriveOnReload { get; set; } = true;
+
         public Integration()
         {
             Program.L.StatusText = "Verifile võltsingu kontroll";
@@ -64,6 +66,18 @@ namespace MasFlashDrv.Config
             tw.Write(content);
             tw.Close();
             tw.Dispose();
+        }
+
+        public string DecodeScheme()
+        {
+            TextReader textReader = File.OpenText(Path.Join(MasRoot, "scheme.cfg"));
+            var strArray1 = textReader.ReadLine()?.Split(';');
+            var strArray2 = strArray1[0].Split(':');
+            var strArray3 = strArray1[1].Split(':');
+
+            var ansiBg = $"\e[48;2;{strArray2[0]};{strArray2[1]};{strArray2[2]}m";
+            var ansiFg = $"\e[38;2;{strArray3[0]};{strArray3[1]};{strArray3[2]}m";
+            return $"~--{ansiBg}{ansiFg}";
         }
     }
 }

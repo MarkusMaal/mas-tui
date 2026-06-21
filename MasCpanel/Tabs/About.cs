@@ -60,7 +60,8 @@ public class About(string? status, Edition edition) : TabBase
         foreach (var (i, kvp) in features.Index())
         {
             var col = edition.Features.Any(f => f == kvp.Key) ? "-" : "8";
-            var pref = col == "-" ? "~-A✓~--" : "~-C✗~--";
+            var noChar = OperatingSystem.IsWindows() ? 'X' : '✗';
+            var pref = col == "-" ? "~-A✓~--" : $"~-C{noChar}~--";
             Console.SetCursorPosition(marginLeft, 4 + i);
             ColorConsole.WriteLine($"~-- {pref}~-{col} {kvp.Value}~--");
         }

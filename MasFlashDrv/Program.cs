@@ -2,6 +2,7 @@
 using MasFlashDrv.Config.Drives;
 using MasTUICommon;
 using System.Diagnostics;
+using System.Text;
 
 namespace MasFlashDrv
 {
@@ -10,7 +11,9 @@ namespace MasFlashDrv
         public static readonly Loader L = new();
         public static Config.News.Feed F = new();
         public static Integration? C;
-        private static FlashDriveFinder? fDf;
+        public static FlashDriveFinder? fDf;
+
+        public static bool ExitNow = false;
 
         static async Task Main(string[] args)
         {
@@ -22,6 +25,7 @@ namespace MasFlashDrv
                 Console.Clear();
                 Console.Error.WriteLine("Rakenduse ohutu peatamine nurjus");
             };
+            Utils.CheckCodepage();
             L.StatusTextChanged += LoadCheck;
             new Thread(SpinLoader).Start();
             L.StatusText = "Ettevalmistamine";
@@ -30,13 +34,7 @@ namespace MasFlashDrv
             C = new();
             L.StatusText = "";
             Console.Clear();
-            if (fDf.Drives.Count == 1)
-            {
-                new MainScreen(fDf.Drives[0]).Show();
-            } else
-            {
-                DrivePicker.Show([.. fDf.Drives]);
-            }
+            DrivePicker.Show();
             Console.Clear();
         }
 

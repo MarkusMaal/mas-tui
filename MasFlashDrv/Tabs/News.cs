@@ -29,7 +29,7 @@ namespace MasFlashDrv.Tabs
 
         private bool SkipArticleDraw { get; set; } = false;
 
-        private int VidContainerWidth => Videos.Max(v => v.Length) + 12;
+        private int VidContainerWidth => Videos.Max(v => v.Length) + 14;
 
         public News(Config.Drives.Edition currentDrive)
         {
@@ -77,7 +77,7 @@ namespace MasFlashDrv.Tabs
                 {
                     if (i > 4) break;
                     Console.SetCursorPosition(maxWidth + 5, 5 + i);
-                    var c = SelectedVideo == i ? "~-F" : "~-8";
+                    var c = SelectedVideo == i ? "~-F> " : "~-8  ";
                     ColorConsole.Write($"{c}{i + 1}. {v}~--");
                 }
             }

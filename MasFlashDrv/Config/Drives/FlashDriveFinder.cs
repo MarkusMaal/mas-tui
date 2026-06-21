@@ -6,7 +6,6 @@
 
         public FlashDriveFinder()
         {
-            Program.L.StatusText = "Mälupulkade otsimine";
             while (Drives.Count == 0)
             {
                 foreach (var di in DriveInfo.GetDrives())
@@ -16,6 +15,7 @@
                         Drives.Add(new Edition(di.RootDirectory.FullName));
                     }
                 }
+                Program.L.StatusText = "Mälupulkade otsimine";
 
                 if (Drives.Count == 0)
                 {

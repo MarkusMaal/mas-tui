@@ -34,6 +34,11 @@ public class Menu
         Items.Add(Items.Count, mi);
     }
 
+    public void Clear()
+    {
+        Items.Clear();
+    }
+
     public void MoveUp()
     {
         switch (SelectedIndex)

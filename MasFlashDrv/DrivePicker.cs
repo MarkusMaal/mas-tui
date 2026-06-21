@@ -5,8 +5,9 @@ namespace MasFlashDrv
 {
     internal abstract class DrivePicker()
     {
-        public static void Show(Edition[] drives)
+        public static void Show()
         {
+            Edition[] drives = [.. Program.fDf!.Drives];
             Menu m = new()
             {
                 MarginLeft = 1,
@@ -24,9 +25,34 @@ namespace MasFlashDrv
             {
                 MainScreen.DrawTitleBar();
                 Console.ResetColor();
-                Console.SetCursorPosition(0, 2);
-                Console.WriteLine(topLabel);
-                m.Draw();
+                if (drives.Length == 1)
+                {
+                    m.SelectedIndex = 0;
+                    var onceOk = true;
+                    while (onceOk || (!Program.ExitNow && !Program.C.ChooseDriveOnReload))
+                    {
+                        m.Execute();
+                        onceOk = false;
+                    }
+                    Console.Clear();
+                    Program.fDf = new();
+                    drives = [.. Program.fDf!.Drives];
+                    m.Clear();
+                    foreach (var d in drives)
+                    {
+                        m.AddItem(GetFormattedLabel(d), (_, _) => { new MainScreen(d).Show(); }, null);
+                    }
+                    m.SelectedIndex = 0;
+                    Console.Clear();
+                    if (Program.ExitNow) break;
+                    continue;
+                }
+                else
+                {
+                    Console.SetCursorPosition(0, 2);
+                    Console.WriteLine(topLabel);
+                    m.Draw();
+                }
                 switch (Console.ReadKey(true).Key)
                 {
                     case ConsoleKey.UpArrow:
@@ -38,13 +64,30 @@ namespace MasFlashDrv
                     case ConsoleKey.Enter:
                         Console.SetCursorPosition(0, 2);
                         Console.WriteLine("".PadRight(topLabel.Length));
-                        m.Execute();
+                        var onceOk = true;
+                        while (onceOk || (!Program.ExitNow && !Program.C.ChooseDriveOnReload))
+                        {
+                            m.Execute();
+                            onceOk = false;
+                        }
                         Console.Clear();
+                        Program.fDf = new();
+                        drives = [.. Program.fDf!.Drives];
+                        m.Clear();
+                        foreach (var d in drives)
+                        {
+                            m.AddItem(GetFormattedLabel(d), (_, _) => { new MainScreen(d).Show(); }, null);
+                        }
+                        m.SelectedIndex = 0;
+                        Console.Clear();
+                        MainScreen.DrawTitleBar();
+                        m.Draw();
                         break;
                     case ConsoleKey.Escape:
                         stop = true;
                         break;
                 }
+                if (Program.ExitNow) break;
             }
         }
 

@@ -18,7 +18,19 @@ namespace MasFlashDrv.Config.Stats
 
         public long Other => TotalUsed - MarkusStuff - QuickApps - BatchFiles - OperatingSystems;
 
-        public long FreeSpace => drive.FsInfo.TotalFreeSpace;
+        public long FreeSpace
+        {
+            get
+            {
+                try
+                {
+                    return drive.FsInfo.TotalFreeSpace;
+                } catch (DriveNotFoundException)
+                {
+                    return 0;
+                }
+            }
+        }
 
 
         // find the directory size with linq recursion
@@ -27,8 +39,14 @@ namespace MasFlashDrv.Config.Stats
         {
             if (DateTime.Now.Ticks % 500 == 0) Program.L.StatusText = "Statistika kogumine";
             if (!Directory.Exists(searchDir.FullName)) return 0;
-            return searchDir.EnumerateFiles().Sum(p => p.Length) + 
-                searchDir.EnumerateDirectories().Where(d => !d.Attributes.HasFlag(FileAttributes.ReparsePoint) && (d.Name != "System Volume Information")).Sum(GetSize);
+            try
+            {
+                return searchDir.EnumerateFiles().Sum(p => p.Length) +
+                    searchDir.EnumerateDirectories().Where(d => !d.Attributes.HasFlag(FileAttributes.ReparsePoint) && (d.Name != "System Volume Information")).Sum(GetSize);
+            } catch
+            {
+                return 0;
+            }
         }
 
         // for printing the size in a user friendly format

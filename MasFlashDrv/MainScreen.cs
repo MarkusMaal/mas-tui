@@ -7,10 +7,10 @@ namespace MasFlashDrv
 {
     internal class MainScreen
     {
-        public Edition Drive { get; set; }
+        public Config.Drives.Edition Drive { get; set; }
         private TabControl? _tab;
 
-        public MainScreen(Edition drive)
+        public MainScreen(Config.Drives.Edition drive)
         {
             Drive = drive;
             _tab = new TabControl()
@@ -59,8 +59,13 @@ namespace MasFlashDrv
             }
             var backup = Console.GetCursorPosition();
             Console.SetCursorPosition(0, 0);
+            var prefix = "~9F";
+            if (Program.C?.Status == "VERIFIED")
+            {
+                prefix = Program.C.DecodeScheme();
+            }
             ColorConsole.Write(
-                $"~9F" + ($"Markuse mälupulga juhtpaneel " + verStr).PadBoth(Console.WindowWidth - 2) + " ");
+                prefix + ($"Markuse mälupulga juhtpaneel " + verStr).PadBoth(Console.WindowWidth - 2) + " ");
             Console.SetCursorPosition(backup.Left, backup.Top);
         }
 
@@ -74,13 +79,18 @@ namespace MasFlashDrv
                 _tab?.Draw();
                 Console.TreatControlCAsInput = true;
                 var ck = Console.ReadKey(true);
+                if (!Directory.Exists(Drive.Mount))
+                {
+                    Program.C?.ChooseDriveOnReload = true;
+                    return;
+                }
                 Console.TreatControlCAsInput = false;
 
-                if (((ck.Modifiers & ConsoleModifiers.Control) != 0) && (ck.KeyChar == 'C'))
+                if ((ck.Modifiers & ConsoleModifiers.Control) != 0 && (ck.KeyChar == 'C'))
                 {
                     break;
                 }
-                var key = ck.Key;
+                var key = ck!.Key;
                 switch (key)
                 {
                     case ConsoleKey.LeftArrow:
@@ -98,6 +108,14 @@ namespace MasFlashDrv
                     case ConsoleKey.Q:
                     case ConsoleKey.Escape:
                         exit = true;
+                        Program.ExitNow = true;
+                        break;
+                    case ConsoleKey.F5:
+                        exit = true;
+                        break;
+                    case ConsoleKey.F6:
+                        var enteredPin = PinEntry.ShowDialog("Sisesta PIN kood");
+                        Console.Title = Drive.CheckPin(enteredPin)  ? "PIN õige" : "PIN vale";
                         break;
                     default:
                         _tab!.TabItems[_tab.SelectedIndex].InvokeKeyDown(this, ck.Key);

@@ -33,10 +33,7 @@ public class Loader
 
         var backup = Console.GetCursorPosition();
         var fullMsg = $" {_loaders[_loadIdx]}  {StatusText}";
-        var left = Console.WindowWidth / 2 - fullMsg.Length;
-        if (left < 0) left = 0;
-        Console.SetCursorPosition(left, Console.WindowHeight / 2);
-        Console.Write(fullMsg.PadBoth(fullMsg.Length * 2) + "\r");
-        Console.SetCursorPosition(backup.Left, backup.Top);
+        Console.SetCursorPosition(0, Console.WindowHeight / 2);
+        Console.Write(fullMsg.PadBoth(Console.WindowWidth) + "\r");
     }
 }

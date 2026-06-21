@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using MasTUICommon.Components;
+using System.Diagnostics;
 using System.Text;
 
 namespace MasTUICommon
@@ -29,5 +29,39 @@ namespace MasTUICommon
             }
             return sb.ToString();
         }
+
+        public static void CheckCodepage()
+        {
+            if (OperatingSystem.IsWindows())
+            {
+                // a hack to force Windows command host window to use UTF-8 instead of OEM-XYZ encoding
+                var p = new Process()
+                {
+                    StartInfo = {
+                        FileName = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.System), "chcp.com"), // C:\Windows\System32\chcp.com (in most cases)
+                        Arguments = "65001", // = UTF-8
+                        UseShellExecute = false, // pretty please use the current window
+                        RedirectStandardOutput = true,
+                    }
+                };
+                p.Start();
+                p.WaitForExit();
+            }
+            if (Console.OutputEncoding.CodePage != 65001)
+            {
+                ColorConsole.WriteLine("~-EHoiatus~--: Käsuaken ei kasuta UTF-8 väljundi kodeeringut, mõned märgid võivad ilmuda valesti!");
+            }
+        }
+
+
+
+        public static ConsoleKeyInfo? TimeoutReadKey(int timeout)
+        {
+            var task = Task.Run(() => Console.ReadKey(true));
+            bool read = task.Wait(timeout);
+            if (read) return task.Result;
+            return null;
+        }
+
     }
 }

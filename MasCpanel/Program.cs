@@ -28,6 +28,7 @@ namespace MasCpanel
         Console.Clear();
         Console.Error.WriteLine("Rakenduse ohutu peatamine nurjus");
       };
+      Utils.CheckCodepage();
       L.StatusTextChanged += LoadCheck;
       new Thread(SpinLoader).Start();
       var status = "";
