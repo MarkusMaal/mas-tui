@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using MasTUICommon;
+using System.Text;
 
 namespace MasFlashDrv.Config.News
 {
@@ -7,6 +8,11 @@ namespace MasFlashDrv.Config.News
         public required string Title { get; set; }
         public required string Content { get; set; }
         public DateTime LastModified { get; set; }
+
+        public int GetLastSkip(int constraint)
+        {
+            return Utils.WrapLines(ToString(), constraint).Split('\n').Length - Console.WindowHeight + 1;
+        }
 
         public override string ToString()
         {

@@ -48,6 +48,7 @@ namespace MasFlashDrv.Config.News
                     .Replace("<br>", "\n")
                     .Replace("<br/>", "\n")
                     .Replace("</td>", "\n")
+                    .Replace("</ul>", "\n\n")
                     ),
                     LastModified = item.PublishingDate ?? new DateTime(),
                 });

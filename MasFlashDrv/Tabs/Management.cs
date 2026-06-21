@@ -13,7 +13,7 @@ namespace MasFlashDrv.Tabs
             Console.Write($"Teave");
             var c = CurrentDrive.EditionName.ToLower() switch
             {
-                "basic" => 'E',
+                "basic" => 'A',
                 "premium" => 'C',
                 "ultimate" => 'D',
                 _ => '8'

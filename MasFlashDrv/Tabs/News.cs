@@ -29,6 +29,8 @@ namespace MasFlashDrv.Tabs
 
         private bool SkipArticleDraw { get; set; } = false;
 
+        private int VidContainerWidth => Videos.Max(v => v.Length) + 12;
+
         public News(Config.Drives.Edition currentDrive)
         {
             Program.L.StatusText = "Uusimate videote avastamine";
@@ -53,8 +55,7 @@ namespace MasFlashDrv.Tabs
 
         public override void Draw(object sender, EventArgs e)
         {
-            var vidContainerWidth = Videos.Max(v => v.Length) + 12;
-            var maxWidth = Console.WindowWidth - vidContainerWidth;
+            var maxWidth = Console.WindowWidth - VidContainerWidth;
             var hideVidContainer = false;
             if (maxWidth < 20)
             {
@@ -116,6 +117,7 @@ namespace MasFlashDrv.Tabs
 
         public override void ReceiveKey(object sender, ConsoleKey key)
         {
+            var maxWidth = Console.WindowWidth - VidContainerWidth;
             switch (key)
             {
                 case ConsoleKey.DownArrow:
@@ -130,6 +132,7 @@ namespace MasFlashDrv.Tabs
                     break;
                 case ConsoleKey.S:
                     Skip++;
+                    if (Skip > Program.F.Articles[SelectedArticle].GetLastSkip(maxWidth)) Skip--;
                     break;
                 case ConsoleKey.W:
                     Skip--;
@@ -137,6 +140,7 @@ namespace MasFlashDrv.Tabs
                     break;
                 case ConsoleKey.PageDown:
                     Skip += Console.WindowHeight - 4;
+                    if (Skip > Program.F.Articles[SelectedArticle].GetLastSkip(maxWidth)) Skip = Program.F.Articles[SelectedArticle].GetLastSkip(maxWidth);
                     break;
                 case ConsoleKey.PageUp:
                     Skip -= Console.WindowHeight - 4;
