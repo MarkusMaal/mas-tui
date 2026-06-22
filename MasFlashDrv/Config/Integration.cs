@@ -68,10 +68,11 @@ namespace MasFlashDrv.Config
             tw.Dispose();
         }
 
-        public string DecodeScheme()
+        public static string DecodeScheme()
         {
             TextReader textReader = File.OpenText(Path.Join(MasRoot, "scheme.cfg"));
             var strArray1 = textReader.ReadLine()?.Split(';');
+            strArray1 ??= ["0:0:0", "0:0:0"];
             var strArray2 = strArray1[0].Split(':');
             var strArray3 = strArray1[1].Split(':');
 

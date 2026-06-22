@@ -1,35 +1,30 @@
-using System.Diagnostics;
-using System.Text;
-using System.Text.Json;
 using MasCommon;
 using MasTUICommon;
 using MasTUICommon.Components;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Text;
+using System.Text.Json;
 
 namespace MasCpanel.Tabs;
 
 public class Desktop : TabBase
 {
-    private DesktopLayout? _desktopLayout;
+    private readonly DesktopLayout? _desktopLayout;
     private Menu? _menu;
-    private readonly JsonSerializerOptions _serializerOptions;
 
-    private List<string> _desktopIcons = [];
+    private readonly List<string> _desktopIcons = [];
 
     public sealed override bool VerifileOk { get; init; }
 
     public Desktop()
     {
-        _serializerOptions = new JsonSerializerOptions
-        {
-            WriteIndented = true,
-            TypeInfoResolver = DesktopLayoutSourceGenerationContext.Default
-        };
         Program.L.StatusText = "Failide olemasolu kontrollimine";
         VerifileOk = Program.CheckFiles(Verifile.FileScope.DesktopIcons);
         if (!VerifileOk) return;
         Program.L.StatusText = "Töölaua konfiguratsiooni laadimine";
         var mas_root = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas");
-        _desktopLayout = JsonSerializer.Deserialize<DesktopLayout>(File.ReadAllText(mas_root + "/DesktopIcons.json"), _serializerOptions);
+        _desktopLayout = JsonSerializer.Deserialize(File.ReadAllText(mas_root + "/DesktopIcons.json"), DesktopLayoutSourceGenerationContext.Default.DesktopLayout);
         Program.L.StatusText = "Töölaua ikoonide tuvastamine";
         var proc = new Process
         {
@@ -77,13 +72,13 @@ public class Desktop : TabBase
         switch (key)
         {
             case ConsoleKey.UpArrow:
-                if (_menu.SelectedIndex > 0)
+                if (_menu?.SelectedIndex > 0)
                 {
                     _menu.SelectedIndex--;
                 }
                 break;
             case ConsoleKey.DownArrow:
-                if (_menu.SelectedIndex < _desktopLayout?.Children.Length - 1)
+                if (_menu?.SelectedIndex < _desktopLayout?.Children.Length - 1)
                 {
                     _menu.SelectedIndex++;
                 }
@@ -181,7 +176,7 @@ public class Desktop : TabBase
     private void SaveDesktopSettings()
     {
         var masRoot = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas");
-        var jsonData = JsonSerializer.Serialize(_desktopLayout, _serializerOptions);
+        var jsonData = JsonSerializer.Serialize(_desktopLayout, DesktopLayoutSourceGenerationContext.Default.DesktopLayout);
         File.WriteAllText(masRoot + "/DesktopIcons.json", jsonData, encoding: Encoding.UTF8);
     }
     
@@ -215,7 +210,7 @@ public class Desktop : TabBase
         p2.Start();
     }
 
-    private string? RenderTextbox(string label)
+    private static string? RenderTextbox(string label)
     {
         var originalLeft = Console.CursorLeft;
         Console.CursorLeft = Console.WindowWidth - 2;

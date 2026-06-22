@@ -12,7 +12,7 @@ namespace MasFlashDrv.Tabs
             get {
                 try
                 {
-                    return currentDrive.FsInfo.TotalSize;
+                    return CurrentDrive.FsInfo.TotalSize;
                 } catch (DriveNotFoundException)
                 {
                     return 0;
@@ -26,7 +26,7 @@ namespace MasFlashDrv.Tabs
             {
                 try
                 {
-                    return currentDrive.FsInfo.DriveFormat;
+                    return CurrentDrive.FsInfo.DriveFormat;
                 } catch (DriveNotFoundException)
                 {
                     return "(null)";
@@ -68,6 +68,9 @@ namespace MasFlashDrv.Tabs
             Console.CursorLeft++; new Checkbox() { Key = 'V', KeyColor = new MasTUICommon.Color() { ForegroundColor = 0xA, BackgroundColor = 0x10 }, Label = "Vali seade andmete värskendamisel\n", Value = Program.C?.ChooseDriveOnReload ?? false }.Draw();
             Console.WriteLine();
             Console.WriteLine("Haldamine\n");
+            Console.WriteLine(" F2  - " + (!CurrentDrive.Unlocked ? "Ava mälupulk haldamiseks  " : "Lukusta haldusfunktsioonid"));
+            Console.WriteLine(" F3  - Muuda PIN koodi");
+            Console.WriteLine(" F4  - Lülita ebaturvaline PIN kood " + (CurrentDrive.IsLegacyPinEnabled ? "välja" : "sisse"));
             Console.WriteLine(" F5  - Laadi andmed uuesti");
             Console.WriteLine(" Esc - Välju");
         }
@@ -81,6 +84,50 @@ namespace MasFlashDrv.Tabs
                     break;
                 case ConsoleKey.V:
                     Program.C?.ChooseDriveOnReload = !Program.C.ChooseDriveOnReload;
+                    break;
+                case ConsoleKey.F2:
+                    CurrentDrive.Unlocked = !CurrentDrive.Unlocked && CurrentDrive.CheckPin(PinEntry.ShowDialog("Sisesta PIN kood"));
+                    break;
+                case ConsoleKey.F3:
+                    if (CurrentDrive.Unlocked || CurrentDrive.CheckPin(PinEntry.ShowDialog("Sisesta vana PIN kood")))
+                    {
+                        var newPin = PinEntry.ShowDialog("Sisesta uus PIN kood");
+                        TextWriter tw;
+                        if (CurrentDrive.IsLegacyPinEnabled)
+                        {
+                            tw = File.CreateText(Path.Join(CurrentDrive.Mount, "NTFS", "config.sys"));
+                            tw.WriteLine(newPin);
+                            tw.Close();
+                            tw.Dispose();
+                        }
+                        tw = File.CreateText(Path.Join(CurrentDrive.Mount, "NTFS", "spin.sys"));
+                        tw.WriteLine(Edition.GenerateSecurePin(newPin));
+                        tw.Close();
+                        tw.Dispose();
+                        CurrentDrive.ReloadPins();
+                    }
+                    break;
+                case ConsoleKey.F4:
+                    if (CurrentDrive.Unlocked || CurrentDrive.CheckPin(PinEntry.ShowDialog("Sisesta vana PIN kood")))
+                    {
+                        var setPin = "";
+                        if (!CurrentDrive.IsLegacyPinEnabled)
+                        {
+                            setPin = PinEntry.ShowDialog("Sisesta uus PIN kood");
+                        }
+                        var tw = File.CreateText(Path.Join(CurrentDrive.Mount, "NTFS", "config.sys"));
+                        tw.Write(CurrentDrive.IsLegacyPinEnabled ? "Ebaturvaline PIN kood keelatud\nInsecure authentication code disabled\n" : $"{setPin}\n");
+                        tw.Close();
+                        tw.Dispose();
+                        if (CurrentDrive.Pin != null)
+                        {
+                            tw = File.CreateText(Path.Join(CurrentDrive.Mount, "NTFS", "spin.sys"));
+                            tw.WriteLine(Edition.GenerateSecurePin(setPin));
+                            tw.Close();
+                            tw.Dispose();
+                        }
+                        CurrentDrive.ReloadPins();
+                    }
                     break;
             }
         }

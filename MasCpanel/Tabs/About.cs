@@ -74,7 +74,7 @@ public class About(string? status, Edition edition) : TabBase
 
     public override void ReceiveKey(object sender, ConsoleKey key)
     {
-        if (!(sender is MainScreen mainScreen) || key != ConsoleKey.Enter)
+        if (sender is not MainScreen mainScreen || key != ConsoleKey.Enter)
             return;
         mainScreen.Reload();
     }

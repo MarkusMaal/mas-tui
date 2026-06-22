@@ -29,7 +29,7 @@ namespace MasFlashDrv
                 {
                     m.SelectedIndex = 0;
                     var onceOk = true;
-                    while (onceOk || (!Program.ExitNow && !Program.C.ChooseDriveOnReload))
+                    while (onceOk || (!Program.ExitNow && !(Program.C?.ChooseDriveOnReload ?? true)))
                     {
                         m.Execute();
                         onceOk = false;
@@ -65,7 +65,7 @@ namespace MasFlashDrv
                         Console.SetCursorPosition(0, 2);
                         Console.WriteLine("".PadRight(topLabel.Length));
                         var onceOk = true;
-                        while (onceOk || (!Program.ExitNow && !Program.C.ChooseDriveOnReload))
+                        while (onceOk || (!Program.ExitNow && !(Program.C?.ChooseDriveOnReload ?? true)))
                         {
                             m.Execute();
                             onceOk = false;

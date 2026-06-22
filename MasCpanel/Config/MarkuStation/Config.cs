@@ -106,7 +106,7 @@ public class Config
 
     public Game[] GetGames()
     {
-        return Games.ToArray();
+        return [.. Games];
     }
 
     public void EditGame(int idx, string name, string location)

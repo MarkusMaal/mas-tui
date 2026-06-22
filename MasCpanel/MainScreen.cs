@@ -53,7 +53,7 @@ public class MainScreen
             tabs = [config, new About(VerifileStatus, _edition)];
         }
 
-        tabs = tabs.Where(t => t.VerifileOk).ToArray();
+        tabs = [.. tabs.Where(t => t.VerifileOk)];
         foreach (var tab in tabs)
         {
             var label = tab switch
@@ -167,8 +167,7 @@ public class MainScreen
         }
 
         const string exitHint = "Q/Esc ";
-        var verStr = Assembly.GetExecutingAssembly().GetName().Version?.ToString(4);
-        if (verStr == null) throw new NullReferenceException("Version number is undefined!");
+        var verStr = (Assembly.GetExecutingAssembly().GetName().Version?.ToString(4)) ?? throw new NullReferenceException("Version number is undefined!");
         while (verStr.EndsWith(".0"))
         {
             verStr = verStr[..^2];

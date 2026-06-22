@@ -6,7 +6,7 @@ namespace MasCpanel.Tabs;
 
 public class DesktopEww : TabBase
 {
-    private EwwYuck _ewwCfg;
+    private readonly EwwYuck _ewwCfg;
     private Menu? _menu;
 
     public DesktopEww()
@@ -40,13 +40,13 @@ public class DesktopEww : TabBase
         switch (key)
         {
             case ConsoleKey.UpArrow:
-                if (_menu.SelectedIndex > 0)
+                if (_menu?.SelectedIndex > 0)
                 {
                     _menu.SelectedIndex--;
                 }
                 break;
             case ConsoleKey.DownArrow:
-                if (_menu.SelectedIndex < _ewwCfg.Entries.Count - 1)
+                if (_menu?.SelectedIndex < _ewwCfg.Entries.Count - 1)
                 {
                     _menu.SelectedIndex++;
                 }
@@ -57,10 +57,10 @@ public class DesktopEww : TabBase
                 string? newIcon = null;
                 while (newName == null || newLocation == null || newIcon == null)
                 {
-                    Console.SetCursorPosition(4, 3 + _menu.SelectedIndex);
-                    var spaces = "".PadRight(_menu.TextPadding - 6);
-                    ColorConsole.Write($"~{_menu.ActiveColor}{spaces}");
-                    Console.SetCursorPosition(4, 3 + _menu.SelectedIndex);
+                    Console.SetCursorPosition(4, 3 + (_menu?.SelectedIndex ?? 0));
+                    var spaces = "".PadRight((_menu?.TextPadding ?? 0) - 6);
+                    ColorConsole.Write($"~{_menu?.ActiveColor}{spaces}");
+                    Console.SetCursorPosition(4, 3 + (_menu?.SelectedIndex ?? 0));
                     ColorConsole.Write($"~--");
                     newName = Console.ReadLine();
                     Console.SetCursorPosition(10, 4 + _ewwCfg.Entries.Count);
@@ -72,7 +72,7 @@ public class DesktopEww : TabBase
                     Console.SetCursorPosition(8, 5 + _ewwCfg.Entries.Count);
                     newIcon = Console.ReadLine();
                 }
-
+                if (_menu == null) break;
                 _ewwCfg.Entries[_menu.SelectedIndex] = new DesktopEntry
                 {
                     Executable = newLocation,
@@ -87,6 +87,6 @@ public class DesktopEww : TabBase
 
     public override void Draw(object sender, EventArgs e)
     {
-        _menu.Draw();
+        _menu?.Draw();
     }
 }

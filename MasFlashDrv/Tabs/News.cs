@@ -109,7 +109,7 @@ namespace MasFlashDrv.Tabs
             }
         }
 
-        private void ClearArticle()
+        private static void ClearArticle()
         {
             Console.SetCursorPosition(0, 3);
             Console.Write("".PadRight(Console.WindowWidth * (Console.WindowHeight - 4)));

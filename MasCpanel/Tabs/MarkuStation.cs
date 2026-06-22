@@ -83,7 +83,7 @@ public class MarkuStation : TabBase
         Program.MsConfig.EditGame(SelectedGame, name, location);
     }
 
-    private void AddGame()
+    private static void AddGame()
     {
         var (name, location) = GameEditor();
         Program.MsConfig.AddGame(new Game
@@ -93,7 +93,7 @@ public class MarkuStation : TabBase
         });
     }
 
-    private (string name, string location) GameEditor()
+    private static (string name, string location) GameEditor()
     {
         string? name = null;
         string? loc = null;
@@ -136,7 +136,7 @@ public class MarkuStation : TabBase
         if (Program.MsConfig.GetGames().Length != 0)
         {
             var padding = Program.MsConfig.GetGames().Max(g => g.Name.Length) + 4;
-            displayList = Program.MsConfig.GetGames().Skip(Skip).Take(5).ToArray();
+            displayList = [.. Program.MsConfig.GetGames().Skip(Skip).Take(5)];
             foreach (var (index, game) in displayList.Index())
             {
                 var actualIndex = Skip + index;
@@ -174,7 +174,7 @@ public class MarkuStation : TabBase
             MonitorMode.External => "Ainult teine ekraan",
             MonitorMode.Extend => "Laienda",
             MonitorMode.Clone => "Klooni",
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(Program.MsConfig.MonitorMode.ToString())
         };
         
         ++Console.CursorLeft;

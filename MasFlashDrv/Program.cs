@@ -2,7 +2,6 @@
 using MasFlashDrv.Config.Drives;
 using MasTUICommon;
 using System.Diagnostics;
-using System.Text;
 
 namespace MasFlashDrv
 {
@@ -15,7 +14,7 @@ namespace MasFlashDrv
 
         public static bool ExitNow = false;
 
-        static async Task Main(string[] args)
+        static async Task Main()
         {
             Console.Title = "Markuse mälupulk";
             Console.CancelKeyPress += (_, e) =>

@@ -62,18 +62,20 @@ public class Shell
             cmd = "/usr/bin/bash";
             args = actualArgs;
         }
-        
-        var p = new Process();
-        p.StartInfo = new ProcessStartInfo
+
+        var p = new Process
         {
-            FileName = cmd,
-            UseShellExecute = false,
-            CreateNoWindow = true,
-            WindowStyle = ProcessWindowStyle.Hidden,
-            Arguments = args,
-            WorkingDirectory = Directory,
-            RedirectStandardError = true,
-            RedirectStandardOutput = true,
+            StartInfo = new ProcessStartInfo
+            {
+                FileName = cmd,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                Arguments = args,
+                WorkingDirectory = Directory,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+            }
         };
         p.Start();
         if (!Detach)

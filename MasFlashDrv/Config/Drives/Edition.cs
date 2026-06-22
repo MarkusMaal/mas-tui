@@ -11,9 +11,13 @@ namespace MasFlashDrv.Config.Drives
 
         public string? Pin { get; set; }
 
-        public string LegacyPin { get; set; }
+        public bool IsLegacyPinEnabled => LegacyPin != "Ebaturvaline PIN kood keelatud";
+
+        public string? LegacyPin { get; set; }
 
         public DriveInfo FsInfo { get; set; }
+
+        public bool Unlocked { get; set; }
 
         public static bool IsDriveCompatible(string path)
         {
@@ -28,11 +32,16 @@ namespace MasFlashDrv.Config.Drives
             EditionName = tr.ReadToEnd();
             tr.Close();
             tr.Dispose();
-            tr = File.OpenText(Path.Join(mount, "NTFS", "config.sys"));
+            ReloadPins();
+        }
+
+        public void ReloadPins()
+        {
+            TextReader tr = File.OpenText(Path.Join(Mount, "NTFS", "config.sys"));
             LegacyPin = tr.ReadLine() ?? "";
             tr.Close();
             tr.Dispose();
-            var spinFile = Path.Join(mount, "NTFS", "spin.sys");
+            var spinFile = Path.Join(Mount, "NTFS", "spin.sys");
             if (File.Exists(spinFile))
             {
                 tr = File.OpenText(spinFile);
@@ -40,6 +49,7 @@ namespace MasFlashDrv.Config.Drives
                 tr.Close();
                 tr.Dispose();
             }
+            Unlocked = false;
         }
 
         public override string ToString()
@@ -66,12 +76,19 @@ namespace MasFlashDrv.Config.Drives
             }
         }
 
+        public static string GenerateSecurePin(string providedPin)
+        {
+            return CreateMD5(providedPin);
+        }
+
         private static string CreateMD5(string input)
         {
-            byte[] inputBytes = Encoding.ASCII.GetBytes(input);
-            byte[] hashBytes = MD5.HashData(inputBytes);
-
-            return Convert.ToHexString(hashBytes);
+            var o = "";
+            foreach (var b in MD5.HashData(Encoding.ASCII.GetBytes(input)))
+            {
+                o += b.ToString("X2");
+            }
+            return o;
         }
     }
 }

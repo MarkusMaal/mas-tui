@@ -15,8 +15,10 @@ public class ScriptMenu
             if (el.Element("Script") == null) ThrowFormatException();
             var title = el.Element("Title")!.Value;
             var tooltip = el.Element("Tooltip")?.Value;
-            var script = new Script();
-            script.Wait = el.Element("Script")!.Attribute("Wait")!.Value == "True";
+            var script = new Script
+            {
+                Wait = el.Element("Script")!.Attribute("Wait")!.Value == "True"
+            };
             foreach (var shEl in el.Element("Script")!.Elements())
             {
                 var platform = shEl.Attribute("Platform");
@@ -37,7 +39,7 @@ public class ScriptMenu
 
     public MenuItem[] GetMenuItems()
     {
-        return _menuItems.ToArray();
+        return [.. _menuItems];
     }
 
     private static void ThrowFormatException()

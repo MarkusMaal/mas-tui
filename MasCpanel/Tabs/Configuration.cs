@@ -106,6 +106,7 @@ public class Configuration : TabBase
 
   public override void ReceiveKey(object sender, ConsoleKey key)
   {
+    if (_config == null) return;
     switch (key)
     {
       case ConsoleKey.A:
@@ -141,19 +142,19 @@ public class Configuration : TabBase
         break;
       case ConsoleKey.D1:
       case ConsoleKey.NumPad1:
-        ShowFilePicker(sender,
+                ShowFilePicker(sender,
           (_, e) => CopyBackground(e.FileName, "bg_desktop.png"),
           (_, _) => {});
         break;
       case ConsoleKey.D2:
       case ConsoleKey.NumPad2:
-        ShowFilePicker(sender,
+                ShowFilePicker(sender,
           (_, e) => CopyBackground(e.FileName, "bg_login.png"),
           (_, _) => {});
         break;
       case ConsoleKey.D3:
       case ConsoleKey.NumPad3:
-        ShowFilePicker(sender, 
+                ShowFilePicker(sender, 
           (_, e) => CopyBackground(e.FileName, "bg_uncommon.png"), 
           (_, _) => {});
         break;
@@ -185,7 +186,7 @@ public class Configuration : TabBase
     ReloadExplorer();
   }
 
-  private void ShowFilePicker(object sender, FilePicker.FileOkHandler okHandle, FilePicker.FileCancelHandler cancelHandle)
+  private static void ShowFilePicker(object sender, FilePicker.FileOkHandler okHandle, FilePicker.FileCancelHandler cancelHandle)
   {
     var ansiBg = $"\e[48;2;{Program.Background.R};{Program.Background.G};{Program.Background.B}m";
     var ansiFg = $"\e[38;2;{Program.Foreground.R};{Program.Foreground.G};{Program.Foreground.B}m";
@@ -218,7 +219,7 @@ public class Configuration : TabBase
       try
       {
         var preview = colorBlockRenderer.RenderFile(e.FileName ?? "");
-        ShowAnsiAtPosition(preview, maxWide + 1, 3);
+            ShowAnsiAtPosition(preview, maxWide + 1, 3);
       }
       catch
       {
@@ -232,12 +233,12 @@ public class Configuration : TabBase
     }
   }
 
-  private (int, int) GetAnsiDims(string ansi)
+  private static (int, int) GetAnsiDims(string ansi)
   {
     return (ansi.Split('\n')[0].Split("\e[0m").Length, ansi.Split('\n').Length);
   }
 
-  private void ShowAnsiAtPosition(string ansi, int x, int y)
+  private static void ShowAnsiAtPosition(string ansi, int x, int y)
   {
     foreach (var (index, item) in ansi.Split('\n').Index())
     {
@@ -284,15 +285,15 @@ public class Configuration : TabBase
     var (num2, _) = GetAnsiDims(_loginPreview);
     Console.SetCursorPosition(1, 5);
     ColorConsole.Write("~--Töölaud (~-D1~--)");
-    ShowAnsiAtPosition(_desktopPreview, 1, 6);
+        ShowAnsiAtPosition(_desktopPreview, 1, 6);
     Console.SetCursorPosition(2 + num1, 5);
     ColorConsole.Write("~--Logimisekraan (~-F2~--)");
-    ShowAnsiAtPosition(_loginPreview, 2 + num1, 6);
+        ShowAnsiAtPosition(_loginPreview, 2 + num1, 6);
     if (4 + num1 + num2 + GetAnsiDims(_uncommonPreview).Item1 < Console.WindowWidth)
     {
       Console.SetCursorPosition(4 + num1 + num2, 5);
       ColorConsole.Write("~--Miniversioon (~-93~--)");
-      ShowAnsiAtPosition(_uncommonPreview, 4 + num1 + num2, 6);
+            ShowAnsiAtPosition(_uncommonPreview, 4 + num1 + num2, 6);
     }
     else
     {
@@ -311,7 +312,7 @@ public class Configuration : TabBase
     Console.CursorLeft = 2;
     _desktopCheck.Draw();
     Console.WriteLine();
-    ColorConsole.WriteLine($"~--  < Pollimise sagedus: {_config.PollRate.ToString()}ms (~-A+~--/~-C-~--) >");
+    ColorConsole.WriteLine($"~--  < Pollimise sagedus: {_config?.PollRate.ToString()}ms (~-A+~--/~-C-~--) >");
     Console.SetCursorPosition(50, 12);
     Console.WriteLine("Värvid:");
     Console.SetCursorPosition(50, 13);

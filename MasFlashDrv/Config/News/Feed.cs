@@ -4,7 +4,7 @@ using System.Xml.Linq;
 
 namespace MasFlashDrv.Config.News
 {
-    internal class Feed
+    internal partial class Feed
     {
         public List<Article> Articles { get; set; } = [];
 
@@ -62,7 +62,10 @@ namespace MasFlashDrv.Config.News
 
         public static string RemoveHtmlTags(string input)
         {
-            return Regex.Replace(input, "<.*?>", string.Empty);
+            return NoHtmlTags().Replace(input, string.Empty);
         }
+
+        [GeneratedRegex("<.*?>")]
+        private static partial Regex NoHtmlTags();
     }
 }

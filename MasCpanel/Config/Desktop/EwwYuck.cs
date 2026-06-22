@@ -4,7 +4,7 @@ namespace MasCpanel.Config.Desktop;
 public class EwwYuck
 {
     public List<DesktopEntry> Entries { get; set; } = [];
-    private string _cfgPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config", "eww",
+    private readonly string _cfgPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".config", "eww",
         "eww.yuck");
     
     public void LoadConfig()

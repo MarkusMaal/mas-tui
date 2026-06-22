@@ -55,6 +55,13 @@
                         break;
                 }
             }
+            x = Console.WindowWidth / 2 - totalWidth / 2;
+            y = Console.WindowHeight / 2 - 3;
+            for (var i = 0; i < 5; i++)
+            {
+                Console.SetCursorPosition(x, y++);
+                Console.WriteLine("".PadRight(totalWidth));
+            }
             return o;
         }
     }
