@@ -72,6 +72,7 @@ namespace MasFlashDrv.Tabs
             Console.WriteLine(" F3  - Muuda PIN koodi");
             Console.WriteLine(" F4  - Lülita ebaturvaline PIN kood " + (CurrentDrive.IsLegacyPinEnabled ? "välja" : "sisse"));
             Console.WriteLine(" F5  - Laadi andmed uuesti");
+            Console.WriteLine(" F6  - Varundushaldur");
             Console.WriteLine(" Esc - Välju");
         }
 
@@ -127,6 +128,13 @@ namespace MasFlashDrv.Tabs
                             tw.Dispose();
                         }
                         CurrentDrive.ReloadPins();
+                    }
+                    break;
+                case ConsoleKey.F6:
+                    if (CurrentDrive.Unlocked || CurrentDrive.CheckPin(PinEntry.ShowDialog("Sisesta PIN kood")))
+                    {
+                        var bm = new BackupManager(CurrentDrive);
+                        bm.Show();
                     }
                     break;
             }

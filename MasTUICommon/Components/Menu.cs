@@ -2,7 +2,7 @@ namespace MasTUICommon.Components;
 
 public class Menu
 {
-    private Dictionary<int, MenuItem> Items { get; set; } = new();
+    private Dictionary<int, MenuItem> Items { get; set; } = [];
     
     public Color DefaultColor { get; set; } = new() { BackgroundColor = 0, ForegroundColor = 15 };
 
@@ -11,7 +11,7 @@ public class Menu
     public int MarginLeft { get; set; } = 0;
     public int MarginTop { get; set; } = 0;
     
-    public int TextPadding { get; set; } = 0;
+    public required int TextPadding { get; set; } = 0;
 
     public int SelectedIndex
     {

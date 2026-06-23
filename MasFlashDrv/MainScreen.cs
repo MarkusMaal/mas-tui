@@ -114,6 +114,7 @@ namespace MasFlashDrv
                     default:
                         _tab!.TabItems[_tab.SelectedIndex].InvokeKeyDown(this, ck.Key);
                         // show/hide development tab
+                        if (!File.Exists(Path.Join(Drive.Mount, "E_INFO", "videod.txt"))) break;
                         const string devLabel = "Arendus";
                         if (Drive.Unlocked && !_tab.TabItems.Any((p) => p.Value.Title == devLabel))
                         {
