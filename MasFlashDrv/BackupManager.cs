@@ -1,5 +1,4 @@
 ﻿using MasFlashDrv.Config.Backups;
-using MasFlashDrv.Config.Drives;
 using MasTUICommon;
 using MasTUICommon.Components;
 using System.Diagnostics;
@@ -25,6 +24,12 @@ namespace MasFlashDrv
             Console.ResetColor();
             Program.L.StatusText = "Varukoopiate avastamine...";
             _backupFinder = new BackupFinder();
+            if (_backupFinder.Backups.Count == 0)
+            {
+                _backupFinder = null;
+                ShowMsg.ShowDialog("Ei leitud ühtegi varukoopiate kaustaga andmekandjat");
+                return;
+            }
             Program.L.StatusText = "";
             _menu = new()
             {

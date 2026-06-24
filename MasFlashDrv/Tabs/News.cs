@@ -44,7 +44,15 @@ namespace MasFlashDrv.Tabs
             var flashNewsFile = Path.Join(currentDrive.Mount, "E_INFO", "news.xml");
             if (File.Exists(tempFeedFile))
             {
-                File.Copy(tempFeedFile, flashNewsFile, true);
+                try
+                {
+                    File.Copy(tempFeedFile, flashNewsFile, true);
+                }
+                catch (IOException)
+                {
+                    
+                }
+
                 File.Delete(tempFeedFile);
             }
             if (Program.F.Articles.Count == 0 && File.Exists(flashNewsFile))

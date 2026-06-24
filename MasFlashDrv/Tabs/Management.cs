@@ -107,6 +107,10 @@ namespace MasFlashDrv.Tabs
                         tw.Dispose();
                         CurrentDrive.ReloadPins();
                     }
+                    else
+                    {
+                        ShowMsg.ShowDialog("Vale PIN kood");
+                    }
                     break;
                 case ConsoleKey.F4:
                     if (CurrentDrive.Unlocked || CurrentDrive.CheckPin(PinEntry.ShowDialog("Sisesta vana PIN kood")))
@@ -129,12 +133,20 @@ namespace MasFlashDrv.Tabs
                         }
                         CurrentDrive.ReloadPins();
                     }
+                    else
+                    {
+                        ShowMsg.ShowDialog("Vale PIN kood");
+                    }
                     break;
                 case ConsoleKey.F6:
                     if (CurrentDrive.Unlocked || CurrentDrive.CheckPin(PinEntry.ShowDialog("Sisesta PIN kood")))
                     {
                         var bm = new BackupManager(CurrentDrive);
                         bm.Show();
+                    }
+                    else
+                    {
+                        ShowMsg.ShowDialog("Vale PIN kood");
                     }
                     break;
             }

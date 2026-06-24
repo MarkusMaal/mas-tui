@@ -24,9 +24,14 @@ namespace MasFlashDrv.Config.News
                 ParseNews(feed);
                 var feedStr = XDocument.Parse(feed.OriginalDocument).ToString();
                 File.WriteAllText(Path.Join(Path.GetTempPath(), "mas_flashdrv_feed.xml"), feedStr);
-            } catch (HttpRequestException)
+            }
+            catch (HttpRequestException)
             {
 
+            }
+            catch (IOException)
+            {
+                
             }
         }
 

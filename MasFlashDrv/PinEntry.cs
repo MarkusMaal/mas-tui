@@ -1,6 +1,6 @@
 ﻿namespace MasFlashDrv
 {
-    internal class PinEntry
+    internal abstract class PinEntry
     {
         public static string ShowDialog(string message)
         {
