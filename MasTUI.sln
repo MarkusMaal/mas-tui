@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.7.11911.148 stable
+VisualStudioVersion = 18.7.11911.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MasCpanel", "MasCpanel\MasCpanel.csproj", "{539492E6-3417-4928-B78E-BFE82C5629A9}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MasTUICommon", "MasTUICommon\MasTUICommon.csproj", "{1A12D765-94E4-4144-9893-CD3AD1805C16}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MasFlashDrv", "MasFlashDrv\MasFlashDrv.csproj", "{CC14EC86-D9A4-4BB9-B37F-E0B8959741C3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MasAPI", "MasAPI\MasAPI.csproj", "{2B410DD4-C6D7-4466-92C9-ED8CE54BE52E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{CC14EC86-D9A4-4BB9-B37F-E0B8959741C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC14EC86-D9A4-4BB9-B37F-E0B8959741C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC14EC86-D9A4-4BB9-B37F-E0B8959741C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B410DD4-C6D7-4466-92C9-ED8CE54BE52E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B410DD4-C6D7-4466-92C9-ED8CE54BE52E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B410DD4-C6D7-4466-92C9-ED8CE54BE52E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B410DD4-C6D7-4466-92C9-ED8CE54BE52E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
