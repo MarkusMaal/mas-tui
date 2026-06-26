@@ -10,7 +10,7 @@ namespace MasAPI
     {
         private HttpListener? _listener;
         private readonly ApiRouter _router;
-        private readonly string _baseUrl = "http://+:14415/";
+        private string _baseUrl = "http://+:14415/";
 
         public MasAPIServer()
         {
@@ -32,6 +32,8 @@ namespace MasAPI
 
         public async Task StartAsync()
         {
+            var keyfile = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas", "mas.pfx");
+
             _listener = new HttpListener();
             _listener.Prefixes.Add(_baseUrl);
             _listener.Start();

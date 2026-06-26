@@ -34,7 +34,8 @@ public class MarkuStation
         tw.Write(LegacyIntro ? "true" : "false");
         tw.Close();
         tw.Dispose();
-        
+
+        return; // the code below is broken as s***
         // games list
         TextWriter gameNamesTxt = File.CreateText(Path.Join(_masRoot, "ms_games.txt"));
         TextWriter gameExecsTxt = File.CreateText(Path.Join(_masRoot, "ms_exec.txt"));
