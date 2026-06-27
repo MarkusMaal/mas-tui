@@ -28,6 +28,7 @@ public class MarkuStation
     {
         // general settings
         TextWriter tw = File.CreateText(Path.Join(_masRoot, "setting.txt"));
+        tw.NewLine = "\n";
         tw.WriteLine(CreepypastaIntro ? "true" : "false");
         tw.WriteLine(SpecialIntro ? "true" : "false");
         tw.WriteLine(PlayIntros ? "true" : "false");
@@ -35,10 +36,11 @@ public class MarkuStation
         tw.Close();
         tw.Dispose();
 
-        return; // the code below is broken as s***
         // games list
         TextWriter gameNamesTxt = File.CreateText(Path.Join(_masRoot, "ms_games.txt"));
         TextWriter gameExecsTxt = File.CreateText(Path.Join(_masRoot, "ms_exec.txt"));
+        gameExecsTxt.NewLine = "\n";
+        gameNamesTxt.NewLine = "\n";
         gameNamesTxt.WriteLine("* MarkuStation mängude loetelu *");
         gameExecsTxt.WriteLine("* MarkuStation käivitaja loetelu (ärge eemaldage/lisage semikooloneid)*;");
         foreach (var game in Games)

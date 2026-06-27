@@ -10,7 +10,7 @@ namespace MasAPI
     {
         private HttpListener? _listener;
         private readonly ApiRouter _router;
-        private string _baseUrl = "http://+:14415/";
+        private readonly string _baseUrl = "http://+:14415/";
 
         public MasAPIServer()
         {
@@ -28,11 +28,12 @@ namespace MasAPI
             _router.AddRoute("GET", "/scheme", SchemeController.GetScheme);
             _router.AddRoute("POST", "/config", CommonConfigController.PushCommonConfig);
             _router.AddRoute("POST", "/markustation/config", MarkuStationController.PushConfig);
+            _router.AddRoute("POST", "/scheme", SchemeController.PushScheme);
         }
 
         public async Task StartAsync()
         {
-            var keyfile = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas", "mas.pfx");
+            _ = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas", "mas.pfx");
 
             _listener = new HttpListener();
             _listener.Prefixes.Add(_baseUrl);
@@ -76,17 +77,16 @@ namespace MasAPI
 
         private async Task ProcessRequestAsync(HttpListenerContext context)
         {
-            ApiRequest apiRequest = null;
             if (DataController.SendDataIfApplicable(context)) return;
-            var request = context.Request;
-            apiRequest = await ParseAsync(context.Request);
+            _ = context.Request;
+            ApiRequest? apiRequest = await ParseAsync(context.Request);
 
             var response = await _router.RouteAsync(apiRequest);
 
             await SendResponseAsync(context.Response, response);
         }
 
-        private async Task SendResponseAsync(HttpListenerResponse response1, ApiResponse response2)
+        private static async Task SendResponseAsync(HttpListenerResponse response1, ApiResponse response2)
         {
             response1.StatusCode = response2.StatusCode;
             response1.ContentType = response2.ContentType;
@@ -101,7 +101,7 @@ namespace MasAPI
             {
                 var buffer = Encoding.UTF8.GetBytes(response2.Body);
                 response1.ContentLength64 = buffer.Length;
-                await response1.OutputStream.WriteAsync(buffer, 0, buffer.Length);
+                await response1.OutputStream.WriteAsync(buffer);
             }
 
             response1.Close();
@@ -112,7 +112,7 @@ namespace MasAPI
             public int StatusCode { get; set; } = 200;
             public string ContentType { get; set; } = "application/json";
             public string Body { get; set; } = string.Empty;
-            public Dictionary<string, string> Headers { get; set; } = new Dictionary<string, string>();
+            public Dictionary<string, string> Headers { get; set; } = [];
         }
     }
 }

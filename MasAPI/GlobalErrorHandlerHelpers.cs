@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using MasAPI.Types;
+using System.Text.Json;
 using static MasAPI.MasAPIServer;
 using static MasAPI.RequestParser;
 
@@ -6,7 +7,7 @@ namespace MasAPI
 {
     internal static class GlobalErrorHandlerHelpers
     {
-        public static async Task<ApiResponse> HandleAsync(Exception exception, ApiRequest request = null)
+        public static async Task<ApiResponse> HandleAsync(Exception exception)
         {
             // Log the exception (in real applications, use proper logging)
             Console.WriteLine($"Error: {exception.Message}");
@@ -21,7 +22,7 @@ namespace MasAPI
                 TimeoutException => new ApiResponse
                 {
                     StatusCode = 408,
-                    Body = JsonHelper.Serialize(new { error = "Request timeout" })
+                    Body = JsonSerializer.Serialize(new Dictionary<string, string>{ { "error", "Request timeout" } }, BadResponseSourceGenerationContext.Default.DictionaryStringString)
                 },
                 _ => StatusCodes.InternalServerError("An unexpected error occurred")
             };

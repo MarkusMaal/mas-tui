@@ -1,13 +1,11 @@
-﻿using System.Drawing;
-
-namespace MasAPI.Models
+﻿namespace MasAPI.Models
 {
 
     public class Scheme
     {
-        public Color BackgroundColor { get; set; }
+        public Types.Color? BackgroundColor { get; set; }
 
-        public Color ForegroundColor { get; set; }
+        public Types.Color? ForegroundColor { get; set; }
 
         public void LoadScheme(string masRoot)
         {
@@ -17,8 +15,20 @@ namespace MasAPI.Models
                 return;
             var strArray2 = strArray1[0].Split(':');
             var strArray3 = strArray1[1].Split(':');
-            this.BackgroundColor = Color.FromArgb(int.Parse(strArray2[0]), int.Parse(strArray2[1]), int.Parse(strArray2[2]));
-            this.ForegroundColor = Color.FromArgb(int.Parse(strArray3[0]), int.Parse(strArray3[1]), int.Parse(strArray3[2]));
+            BackgroundColor = new Types.Color()
+            {
+                A = 255,
+                R = int.Parse(strArray2[0]),
+                G = int.Parse(strArray2[1]),
+                B = int.Parse(strArray2[2])
+            };
+            ForegroundColor = new Types.Color()
+            {
+                A = 255,
+                R = int.Parse(strArray3[0]),
+                G = int.Parse(strArray3[1]),
+                B = int.Parse(strArray3[2])
+            };
             textReader.Close();
             textReader.Dispose();
         }
@@ -26,7 +36,7 @@ namespace MasAPI.Models
         public void SaveScheme(string masRoot)
         {
             TextWriter text = File.CreateText(Path.Join(masRoot, "scheme.cfg"));
-            text.Write($"{BackgroundColor.R}:{BackgroundColor.G}:{BackgroundColor.B}:;{ForegroundColor.R}:{ForegroundColor.G}:{ForegroundColor.B}:;");
+            text.Write($"{BackgroundColor?.R}:{BackgroundColor?.G}:{BackgroundColor?.B}:;{ForegroundColor?.R}:{ForegroundColor?.G}:{ForegroundColor?.B}:;");
             text.Close();
             text.Dispose();
         }
@@ -39,8 +49,9 @@ namespace MasAPI.Models
 
         public string ForegroundToAnsi() => ColorToAnsi(ForegroundColor);
 
-        private static string ColorToHexString(Color color)
+        private static string ColorToHexString(Types.Color? color)
         {
+            if (color == null) return "#000000";
             var num = color.R;
             var str1 = num.ToString("X").PadLeft(2, '0');
             num = color.G;
@@ -50,10 +61,11 @@ namespace MasAPI.Models
             return $"#{str1}{str2}{str3}";
         }
 
-        private static string ColorToAnsi(Color color)
+        private static string ColorToAnsi(Types.Color? color)
         {
             return
-                $"\e[48;2;{color.R};{color.G};{color.B}m";
+                $"\e[48;2;{color?.R};{color?.G};{color?.B}m";
         }
+
     }
 }

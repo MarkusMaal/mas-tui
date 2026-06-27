@@ -1,6 +1,7 @@
-﻿using MasTUICommon.Components;
+﻿using MasAPI.Types;
+using MasTUICommon.Components;
 using System.Net;
-using System.Text;
+using System.Text.Json;
 using static MasAPI.MasAPIServer;
 
 namespace MasAPI
@@ -22,15 +23,16 @@ namespace MasAPI
             var apiRequest = new ApiRequest
             {
                 Method = request.HttpMethod,
-                Url = request.Url,
-                Headers = new Dictionary<string, string>(),
-                QueryParameters = ParseQueryString(request.Url.Query),
+                Url = request.Url ?? new Uri(""),
+                Headers = [],
+                QueryParameters = ParseQueryString(request.Url?.Query ?? ""),
                 Body = await ReadRequestBodyAsync(request)
             };
             // Extract headers
-            foreach (string headerName in request.Headers.AllKeys)
+            foreach (var headerName in request.Headers.AllKeys)
             {
-                apiRequest.Headers[headerName] = request.Headers[headerName];
+                if (headerName == null) continue;
+                apiRequest.Headers[headerName] = request.Headers[headerName] ?? "";
             }
             return apiRequest;
         }
@@ -68,46 +70,46 @@ namespace MasAPI
         // Common status code helpers
         public static class StatusCodes
         {
-            public static ApiResponse Ok(object data) => new ApiResponse
+            public static ApiResponse Ok(Dictionary<string, string> data) => new()
             {
                 StatusCode = 200,
-                Body = JsonHelper.Serialize(data)
+                Body = JsonSerializer.Serialize(data, BadResponseSourceGenerationContext.Default.DictionaryStringString)
             };
 
-            public static ApiResponse Created(object data) => new ApiResponse
+            public static ApiResponse Created(Dictionary<string, string> data) => new()
             {
                 StatusCode = 201,
-                Body = JsonHelper.Serialize(data)
+                Body = JsonSerializer.Serialize(data, BadResponseSourceGenerationContext.Default.DictionaryStringString)
             };
 
-            public static ApiResponse NoContent() => new ApiResponse { StatusCode = 204 };
+            public static ApiResponse NoContent() => new() { StatusCode = 204 };
 
-            public static ApiResponse BadRequest(string message) => new ApiResponse
+            public static ApiResponse BadRequest(string message) => new()
             {
                 StatusCode = 400,
-                Body = JsonHelper.Serialize(new { error = message })
+                Body = JsonSerializer.Serialize(new Dictionary<string, string> { { "error", message } }, BadResponseSourceGenerationContext.Default.DictionaryStringString)
             };
 
-            public static ApiResponse NotFound(string message = "Resource not found") => new ApiResponse
+            public static ApiResponse NotFound(string message = "Resource not found") => new()
             {
                 StatusCode = 404,
-                Body = JsonHelper.Serialize(new { error = message })
+                Body = JsonSerializer.Serialize(new Dictionary<string, string> { { "error", message } }, BadResponseSourceGenerationContext.Default.DictionaryStringString)
             };
 
-            public static ApiResponse InternalServerError(string message = "Internal server error") => new ApiResponse
+            public static ApiResponse InternalServerError(string message = "Internal server error") => new()
             {
                 StatusCode = 500,
-                Body = JsonHelper.Serialize(new { error = message })
+                Body = JsonSerializer.Serialize(new Dictionary<string, string> { { "error", message } }, BadResponseSourceGenerationContext.Default.DictionaryStringString)
             };
         }
 
         public class ApiRequest
         {
-            public string Method { get; set; }
-            public Uri Url { get; set; }
-            public Dictionary<string, string> Headers { get; set; }
-            public Dictionary<string, string> QueryParameters { get; set; }
-            public string Body { get; set; }
+            public required string Method { get; set; }
+            public required Uri Url { get; set; }
+            public required Dictionary<string, string> Headers { get; set; }
+            public required Dictionary<string, string> QueryParameters { get; set; }
+            public required string Body { get; set; }
         }
     }
 }

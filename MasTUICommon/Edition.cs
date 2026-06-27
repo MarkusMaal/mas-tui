@@ -1,6 +1,8 @@
+using System.Text.Json.Serialization;
+
 namespace MasTUICommon;
 
-public class Edition
+public partial class Edition
 {
     /// <summary>
     /// Edition name (e.g. Pro, Premium, Basic+)
@@ -73,10 +75,22 @@ public class Edition
         Username = lines[5];
         Language = lines[6];
         WinVer = lines[7];
-        Features = lines[8].Split('-').ToList();
+        Features = [.. lines[8].Split('-')];
         Pin = lines[9];
         Name = lines[10];
         if (lines.Length < 12) return;
         Hash = lines[11];
+    }
+
+
+
+    // Required for generating trimmed executables
+    [JsonSerializable(typeof(Edition))]
+    [JsonSerializable(typeof(bool))]
+    [JsonSerializable(typeof(int))]
+    [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
+    public partial class EditionSourceGenerationContext : JsonSerializerContext
+    {
+
     }
 }

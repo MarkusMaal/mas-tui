@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using MasAPI.Types;
+using System.Text;
 using System.Text.Json;
 using static MasAPI.MasAPIServer;
 using static MasAPI.RequestParser;
@@ -11,13 +12,13 @@ namespace MasAPI
 
         public ApiRouter()
         {
-            _routes = new Dictionary<string, Dictionary<string, Func<ApiRequest, Task<ApiResponse>>>>();
+            _routes = [];
         }
 
         public void AddRoute(string method, string pattern, Func<ApiRequest, Task<ApiResponse>> handler)
         {
             if (!_routes.ContainsKey(method))
-                _routes[method] = new Dictionary<string, Func<ApiRequest, Task<ApiResponse>>>();
+                _routes[method] = [];
 
             _routes[method][pattern] = handler;
         }
@@ -37,16 +38,14 @@ namespace MasAPI
 
         public async Task<ApiResponse> RouteAsync(ApiRequest request)
         {
-            if (!_routes.ContainsKey(request.Method))
-                return new ApiResponse { StatusCode = 405, Body = JsonSerializer.Serialize(new { error = "Method not allowed" }) };
-
-            var methodRoutes = _routes[request.Method];
+            if (!_routes.TryGetValue(request.Method, out Dictionary<string, Func<ApiRequest, Task<ApiResponse>>>? methodRoutes))
+                return new ApiResponse { StatusCode = 405, Body = JsonSerializer.Serialize(new Dictionary<string, string>() { { "Error", "Method not allowed" } }, BadResponseSourceGenerationContext.Default.DictionaryStringString) };
             var path = request.Url.AbsolutePath;
 
             // Exact match first
-            if (methodRoutes.ContainsKey(path))
+            if (methodRoutes.TryGetValue(path, out Func<ApiRequest, Task<ApiResponse>>? value))
             {
-                return await methodRoutes[path](request);
+                return await value(request);
             }
 
             // Pattern matching for parameterized routes
@@ -59,12 +58,12 @@ namespace MasAPI
                 }
             }
 
-            return new ApiResponse { StatusCode = 404, Body = JsonSerializer.Serialize(new { error = "Route not found" }) };
+            return new ApiResponse { StatusCode = 404, Body = JsonSerializer.Serialize(new Dictionary<string, string>() { { "Error", "Route not found" } }, BadResponseSourceGenerationContext.Default.DictionaryStringString) };
         }
 
-        private bool MatchesPattern(string pattern, string path, out Dictionary<string, string> parameters)
+        private static bool MatchesPattern(string pattern, string path, out Dictionary<string, string> parameters)
         {
-            parameters = new Dictionary<string, string>();
+            parameters = [];
 
             var patternParts = pattern.Split('/');
             var pathParts = path.Split('/');
@@ -73,7 +72,7 @@ namespace MasAPI
 
             for (int i = 0; i < patternParts.Length; i++)
             {
-                if (patternParts[i].StartsWith("{") && patternParts[i].EndsWith("}"))
+                if (patternParts[i].StartsWith($"{{") && patternParts[i].EndsWith($"}}"))
                 {
                     var paramName = patternParts[i].Trim('{', '}');
                     parameters[paramName] = pathParts[i];

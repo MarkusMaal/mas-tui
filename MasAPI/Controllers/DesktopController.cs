@@ -9,7 +9,7 @@ namespace MasAPI.Controllers
     {
         private static readonly string masRoot = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas");
 
-        internal static async Task<ApiResponse> GetDesktopConfig(ApiRequest request)
+        internal static async Task<ApiResponse> GetDesktopConfig(ApiRequest _)
         {
             var jsonFile = Path.Join(masRoot, "DesktopIcons.json");
             var json = await File.ReadAllTextAsync(jsonFile);

@@ -17,15 +17,8 @@ $build_flags = ("-c", "Release",
 				"-p:DebugSymbols=false")
 dotnet publish MasCpanel $build_flags
 dotnet publish MasFlashDrv $build_flags
-$build_flags = ("-c", "Release",
-				"-o", "out",
-				"-p:PublishReadyToRun=true",
-				"-p:PublishSingleFile=true",
-				"--self-contained", "true",
-				"-p:IncludeNativeLibrariesForSelfExtract=true",
-				"-p:DebugSymbols=false")
 dotnet publish MasAPI $build_flags
-$mas_root = [environment]::getfolderpath(“userprofile”) + "/.mas"
+$mas_root = [environment]::getfolderpath("userprofile") + "/.mas"
 $platform = [System.Environment]::OSVersion.Platform
 $suff = ""
 if ($platform -eq "Win32NT")
@@ -34,3 +27,4 @@ if ($platform -eq "Win32NT")
 }
 Copy-Item -Path out/MasCpanel$suff -Destination "$mas_root/Markuse asjad" -Verbose
 Copy-Item -Path out/MasFlashDrv$suff -Destination "$mas_root/Markuse asjad" -Verbose
+Copy-Item -Path out/MasAPI$suff -Destination "$mas_root/Markuse asjad" -Verbose

@@ -8,7 +8,7 @@ namespace MasAPI
         public static Verifile? vf;
         static async Task Main()
         {
-            Console.CancelKeyPress += (object? sender, ConsoleCancelEventArgs e) =>
+            Console.CancelKeyPress += (sender, e) =>
             {
                 ColorConsole.WriteLine($"~-8[{DateTime.Now:yyy-MM-dd HH:mm:ss}]~-- Shutting down server");
                 e.Cancel = false;
@@ -33,6 +33,16 @@ namespace MasAPI
             }
             var server = new MasAPIServer();
             await server.StartAsync();
+        }
+
+        public static void SendDesktopIconCommand(string type, string args = "")
+        {
+            DesktopCommand cmd = new()
+            {
+                Arguments = args,
+                Type = type
+            };
+            cmd.Send(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".mas"));
         }
     }
 }
