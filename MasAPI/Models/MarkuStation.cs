@@ -123,6 +123,11 @@ public class MarkuStation
         return [.. Games];
     }
 
+    public void SetGames(List<Game> games)
+    {
+        this.Games = games;
+    }
+
     public void EditGame(int idx, string name, string location)
     {
         Games[idx].Name = name;

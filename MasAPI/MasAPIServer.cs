@@ -26,9 +26,12 @@ namespace MasAPI
             _router.AddRoute("GET", "/markustation/config", MarkuStationController.GetConfig);
             _router.AddRoute("GET", "/markustation/games", MarkuStationController.GetGames);
             _router.AddRoute("GET", "/scheme", SchemeController.GetScheme);
-            _router.AddRoute("POST", "/config", CommonConfigController.PushCommonConfig);
-            _router.AddRoute("POST", "/markustation/config", MarkuStationController.PushConfig);
-            _router.AddRoute("POST", "/scheme", SchemeController.PushScheme);
+            _router.AddRoute("PUT", "/config", CommonConfigController.PushCommonConfig);
+            _router.AddRoute("PUT", "/desktop", DesktopController.PushDesktopConfig);
+            _router.AddRoute("POST", "/desktop/command", DesktopController.SendDesktopCommand);
+            _router.AddRoute("PUT", "/markustation/config", MarkuStationController.PushConfig);
+            _router.AddRoute("PUT", "/markustation/games", MarkuStationController.PushGames);
+            _router.AddRoute("PUT", "/scheme", SchemeController.PushScheme);
         }
 
         public async Task StartAsync()

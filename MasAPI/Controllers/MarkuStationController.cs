@@ -48,5 +48,26 @@ namespace MasAPI.Controllers
             var response = new ApiResponse { StatusCode = ms != null ? 200 : 403, ContentType = "application/json", Body = JsonSerializer.Serialize(ms, MarkuStationSourceGenerationContext.Default.MarkuStation), };
             return await Task.FromResult(response);
         }
+
+        internal static async Task<ApiResponse> PushGames(ApiRequest request)
+        {
+            if (!(request.Headers.ContainsKey("Auth") && AuthRequest.CheckAuth(request.Headers["Auth"])))
+            {
+                var badResponse = new ApiResponse { StatusCode = 400, ContentType = "application/json", Body = JsonSerializer.Serialize(new Dictionary<string, string>() { { "Error", "Unauthorized" } }, BadResponseSourceGenerationContext.Default.DictionaryStringString), };
+                return await Task.FromResult(badResponse);
+            }
+            var msR = JsonSerializer.Deserialize(request.Body, GameArraySourceGenerationContext.Default.GameArray);
+            var ms = new MarkuStation();
+            ms.LoadConfig();
+            if (msR != null)
+            {
+                var gList = new List<Game>();
+                gList.AddRange(msR);
+                ms.SetGames(gList);
+                ms.SaveConfig();
+            }
+            var response = new ApiResponse { StatusCode = ms != null ? 200 : 403, ContentType = "application/json", Body = JsonSerializer.Serialize(ms?.GetGames(), GameArraySourceGenerationContext.Default.GameArray), };
+            return await Task.FromResult(response);
+        }
     }
 }
